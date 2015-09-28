@@ -23,7 +23,7 @@ char* ns_convert(char* number, unsigned int sourceBase, unsigned int destBase)
 		
 	}
 	i=0;
-	float a=0;
+	double a=0;
 	while (number[j]!='.'){
 		j++;
 		}
@@ -35,23 +35,19 @@ char* ns_convert(char* number, unsigned int sourceBase, unsigned int destBase)
 			
 	}
 	i=-1;
-	//printf("\n %f \n",a);
 	int b;
-	int v=0;
+	long v=0;
 	while (a>=v){
 		v++;
 	}
 	v--;
 	a-=v; 
-	//printf("\n %f \n",a);
 	while (v>=1){
 		i++;
-		//printf(" %d ",v);
 		b = v % destBase;
 		if (b<10) {number[i]=b+48;}
 		else {number[i]=b+55;}
-		v=(v-b)/destBase;
-		//printf(" %d \n",b);	
+		v=(v-b)/destBase;	
 	}
 	l=0;
 	char c;
