@@ -45,7 +45,7 @@ double long2double(long long a)
 
 	if (a == 2047)
 	{
-		if (b == 0)
+		if (b == 1)
 		{
 			if (arr[63] == -1)
 			
