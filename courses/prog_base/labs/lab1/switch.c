@@ -20,14 +20,14 @@ int exec(int op, int a, int b){
 		case 8: if (a > b) result = a; else result = b; break;
 		case 9: if (a < b) result = a; else result = b; break;
 		case 10: switch (abs(b) % 8){
-			case 1: result = 1; break;
-			case 2: result = 2; break;
-			case 3: result = 4; break;
-			case 4: result = 8; break;
-			case 5: result = 16; break;
-			case 6: result = 4; break;
-			case 7: result = 8; break;
-			case 0: result = 1; break;
+			case 1: result = sizeof(signed char); break;
+			case 2: result = sizeof(short); break;
+			case 3: result = sizeof(unsigned int); break;
+			case 4: result = sizeof(long); break;
+			case 5: result = sizeof(unsigned long long); break;
+			case 6: result = sizeof(float); break;
+			case 7: result = sizeof(double); break;
+			case 0: result = sizeof(char); break;
 		} result *= abs(a); break;
 		case 11: result = 3 * PI * cos(2 * a * b) / a; break;
 		default : if (op < 100) result = (op % abs(a + 1)) + (op % abs(b + 1)); else result = -1; break;
