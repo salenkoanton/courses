@@ -6,7 +6,7 @@ double calc (double x, double y, double z)
 		return NAN;
 	else 
 	{
-		a = pow(x, y + 1) / (pow(x - y, 1 / z)) + 3 * y + z / x + sqrt(fabs(cos(y) / sin(x) + 1));
+		a = pow(x, y + 1) / (pow(x - y, 1 / z)) + 2 * y + z / x + sqrt(fabs(cos(y) / sin(x) + 1));
 		return a;
 	}
 }
