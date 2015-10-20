@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-void rotateCW270(int mat[4][4]);	
+/*void rotateCW270(int mat[4][4]);	
 void flipV(int mat[4][4]);	
 void transposMain(int mat[4][4]);
 void printMatrix(int mat[4][4]);
@@ -25,7 +25,7 @@ int main (void)
 	printMatrix(arr);
 	return 0;
 }
-
+*/
 void rotateCW270(int mat[4][4])
 {
 	int c, i, j, n = 4;
@@ -57,7 +57,7 @@ void transposMain(int mat[4][4])
 	rotateCW270(mat);
 	flipV(mat);
 }
-void printMatrix(int mat[4][4]) {
+/*void printMatrix(int mat[4][4]) {
     int i, j;
     int n = 4;
     printf("{ ");
@@ -72,7 +72,7 @@ void printMatrix(int mat[4][4]) {
     }
     printf(" };\n");
 	printf("-----------------------------------------------\n");
-}
+}*/
 void fillRand(int mat[4][4], int mat1[4][4])
 {
 	int i, j, n = 4;
@@ -82,7 +82,7 @@ void fillRand(int mat[4][4], int mat1[4][4])
 			mat[i][j] = ((int)rand() % 1999) - 999;
 			mat1[i][j] = mat[i][j];
 		}
-}
+}/*
 void ret_arr(int mat[4][4], int mat1[4][4])
 {
 	int i, j, n = 4;
@@ -90,3 +90,4 @@ void ret_arr(int mat[4][4], int mat1[4][4])
 		for (j = 0; j < n; j++)
 			mat[i][j] = mat1[i][j];
 }
+*/
