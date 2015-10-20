@@ -73,14 +73,14 @@ void transposMain(int mat[4][4])
     printf(" };\n");
 	printf("-----------------------------------------------\n");
 }*/
-void fillRand(int mat[4][4], int mat1[4][4])
+void fillRand(int mat[4][4]/*, int mat1[4][4]*/)
 {
 	int i, j, n = 4;
 	for (i = 0; i < n; i++)
 		for (j = 0; j < n; j++)
 		{
 			mat[i][j] = ((int)rand() % 1999) - 999;
-			mat1[i][j] = mat[i][j];
+			/*mat1[i][j] = mat[i][j];*/
 		}
 }/*
 void ret_arr(int mat[4][4], int mat1[4][4])
