@@ -55,6 +55,9 @@ int run(int moves[], int movesLen, int res[], int resLen)
 		if (currentState == STOP_STATE)
 		{
 			i = movesLen;
+			int a = j;
+			for (j = a + 1; j < resLen; j++)
+				res[j] = 0;
 		}
 		if (currentState == POP_STATE && j != 0)
 		{
