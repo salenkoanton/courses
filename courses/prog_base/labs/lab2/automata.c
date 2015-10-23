@@ -2,7 +2,7 @@
 /*int run(int moves[], int movesLen, int res[], int resLen);
 int main(void)
 {
-	int arr[6] = {12, 12, 202, 22, 22, 4};
+	int arr[6] = {22, 12, 202, 22, 22, 4};
 	int brr[6] = {-10, -10, -10, -10, -10, -10};
 	int a = 6, b = 6;
 	int c = run(arr, a, brr, b);
@@ -13,6 +13,7 @@ int main(void)
 }*/
 int run(int moves[], int movesLen, int res[], int resLen)
 {
+	
 	enum pos{
 		Q0_pos = -4,
 		Q1_pos,
@@ -31,41 +32,26 @@ int run(int moves[], int movesLen, int res[], int resLen)
 	enum State currentState = initialState;
 	initial_pos = Q0_pos;
 	enum pos current_pos = initial_pos;
-	int i, j = 0;
-	
+	int i, j = 0, f;
+	int arr[4][4] = {1, POP_STATE, 5, BREAK_STATE, STOP_STATE, 21, CONTINUE_STATE, 625, BREAK_STATE, STOP_STATE, REPEAT_STATE, POP_STATE, 25, 6, 7, 627};
+	int brr[4][4] = {Q0_pos, Q1_pos, Q1_pos, 0, 0, Q2_pos, Q2_pos, Q3_pos, 0, 0, Q3_pos, Q3_pos, Q2_pos, Q1_pos, Q0_pos, Q3_pos};
 	for (i = 0; i < movesLen; i++)
 	{
 		currentState = initialState;
-		switch (current_pos) {
-			case Q0_pos: switch (moves[i]) {
-				case 4: res[j] = 1; j++; break;
-				case 12: currentState = POP_STATE; current_pos = Q1_pos; break;
-				case 22: res[j] = 5; j++; current_pos = Q1_pos; break;
-				case 202: currentState = BREAK_STATE; break;
-				default: currentState = STOP_STATE; break;
-			}; break;
-			case Q1_pos: switch (moves[i]) {
-				case 4: currentState = STOP_STATE; break;
-				case 12: res[j] = 21; j++; current_pos = Q2_pos; break;
-				case 22: currentState = CONTINUE_STATE; current_pos = Q2_pos; break;
-				case 202: res[j] = 625; j++; current_pos = Q3_pos; break;
-				default: currentState = STOP_STATE; break;
-			}; break;
-			case Q2_pos: switch (moves[i]) {
-				case 4: currentState = BREAK_STATE; break;
-				case 12: currentState = STOP_STATE; break;
-				case 22: currentState = REPEAT_STATE; current_pos = Q3_pos; break;
-				case 202: currentState = POP_STATE; current_pos = Q3_pos; break;
-				default: currentState = STOP_STATE; break;
-			}; break;
-			case Q3_pos: switch (moves[i]) {
-				case 4: res[j] = 25; j++; current_pos = Q2_pos; break;
-				case 12: res[j] = 6; j++; current_pos = Q1_pos; break;
-				case 22: res[j] = 7; j++; current_pos = Q0_pos; break;
-				case 202: res[j] = 627; j++; break;
-				default: currentState = STOP_STATE; break;
-			}; break;
+		switch (moves[i]) {
+				case 4: f = 0; break;
+				case 12: f = 1; break;
+				case 22: f = 2; break;
+				case 202: f = 3; break;
+				default: f = 4; currentState = STOP_STATE; break;
+			};
+		if (f != 4 && arr[current_pos + 4][f] > 0)
+		{
+			res[j] = arr[current_pos + 4][f];
+			j++;
 		}
+		else 
+			currentState = arr[current_pos + 4][f];
 		if (currentState == STOP_STATE)
 		{
 			i = movesLen;
@@ -86,7 +72,7 @@ int run(int moves[], int movesLen, int res[], int resLen)
 		}
 		if (j == resLen)
 			i = movesLen;
-					
+		current_pos = brr[current_pos + 4][f];
 	}
 	int c = j;
 	while (j++ < resLen && (currentState != STOP_STATE))
@@ -96,4 +82,5 @@ int run(int moves[], int movesLen, int res[], int resLen)
 	return c;
 	
 }
+
 
