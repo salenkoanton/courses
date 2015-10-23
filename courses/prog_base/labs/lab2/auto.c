@@ -42,24 +42,28 @@ int run(int moves[], int movesLen, int res[], int resLen)
 				case 12: currentState = POP_STATE; current_pos = Q1_pos; break;
 				case 22: res[j] = 5; j++; current_pos = Q1_pos; break;
 				case 202: currentState = BREAK_STATE; break;
+				default: currentState = STOP_STATE; break;
 			}; break;
 			case Q1_pos: switch (moves[i]) {
 				case 4: currentState = STOP_STATE; break;
 				case 12: res[j] = 21; j++; current_pos = Q2_pos; break;
 				case 22: currentState = CONTINUE_STATE; current_pos = Q2_pos; break;
 				case 202: res[j] = 625; j++; current_pos = Q3_pos; break;
+				default: currentState = STOP_STATE; break;
 			}; break;
 			case Q2_pos: switch (moves[i]) {
 				case 4: currentState = BREAK_STATE; break;
 				case 12: currentState = STOP_STATE; break;
 				case 22: currentState = REPEAT_STATE; current_pos = Q3_pos; break;
 				case 202: currentState = POP_STATE; current_pos = Q3_pos; break;
+				default: currentState = STOP_STATE; break;
 			}; break;
 			case Q3_pos: switch (moves[i]) {
 				case 4: res[j] = 25; j++; current_pos = Q2_pos; break;
 				case 12: res[j] = 6; j++; current_pos = Q1_pos; break;
 				case 22: res[j] = 7; j++; current_pos = Q0_pos; break;
 				case 202: res[j] = 627; j++; break;
+				default: currentState = STOP_STATE; break;
 			}; break;
 		}
 		if (currentState == STOP_STATE)
