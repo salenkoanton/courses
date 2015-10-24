@@ -60,7 +60,10 @@ int maxOccurance(int arr[], int size)
 			if (arr[j] == arr[i])
 				p++;
 		if (p >= q && arr[i] > max)
+		{
+			q = p;
 			max = arr[i];
+		}
 		p = 1;
 	}
 	return max;
