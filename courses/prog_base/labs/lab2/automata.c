@@ -33,8 +33,14 @@ int run(int moves[], int movesLen, int res[], int resLen)
 	initial_pos = Q0_pos;
 	enum pos current_pos = initial_pos;
 	int i, j = 0, f;
-	int arr[4][4] = {1, POP_STATE, 5, BREAK_STATE, STOP_STATE, 21, CONTINUE_STATE, 625, BREAK_STATE, STOP_STATE, REPEAT_STATE, POP_STATE, 25, 6, 7, 627};
-	int brr[4][4] = {Q0_pos, Q1_pos, Q1_pos, 0, 0, Q2_pos, Q2_pos, Q3_pos, 0, 0, Q3_pos, Q3_pos, Q2_pos, Q1_pos, Q0_pos, Q3_pos};
+	int arr[4][4] = {1, POP_STATE, 5, BREAK_STATE,
+		STOP_STATE, 21, CONTINUE_STATE, 625,
+		BREAK_STATE, STOP_STATE, REPEAT_STATE, POP_STATE,
+		25, 6, 7, 627};
+	int brr[4][4] = {Q0_pos, Q1_pos, Q1_pos, 0,
+		0, Q2_pos, Q2_pos, Q3_pos,
+		0, 0, Q3_pos, Q3_pos,
+		Q2_pos, Q1_pos, Q0_pos, Q3_pos};
 	for (i = 0; i < movesLen; i++)
 	{
 		currentState = initialState;
@@ -56,8 +62,9 @@ int run(int moves[], int movesLen, int res[], int resLen)
 		{
 			i = movesLen;
 			int a = j;
-			for (j = a + 1; j < resLen; j++)
+			for (j = a; j < resLen; j++)
 				res[j] = 0;
+			return a;
 		}
 		if (currentState == POP_STATE && j != 0)
 		{
@@ -70,15 +77,16 @@ int run(int moves[], int movesLen, int res[], int resLen)
 		{
 			i = movesLen;
 			int a = j;
-			for (j = a + 1; j < resLen; j++)
+			for (j = a; j < resLen; j++)
 				res[j] = 0;
+			return a;
 		}
 		if (j == resLen)
 			i = movesLen;
 		current_pos = brr[current_pos + 4][f];
 	}
 	int c = j;
-	while (j++ < resLen && (currentState != STOP_STATE))
+	while (j++ < resLen)
 	{
 		res[j - 1] = 0;
 	}

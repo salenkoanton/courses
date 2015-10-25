@@ -1,27 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-void fillRand3(int arr[], int size);
-int checkRand3(int arr[], int size);
-int maxValue(int arr[], int size);
-int maxIndex(int arr[], int size);
-int maxOccurance(int arr[], int size);
-int diff(int arr1[], int arr2[], int res[], int size);
-void mult(int arr1[], int arr2[], int res[], int size);
-int gt(int arr1[], int arr2[], int size);
-void lor(int arr1[], int arr2[], int res[], int size);
-int main(void)
-{
-	int arr1[100], arr2[100];
-	int n = 5;
-	fillRand3(arr1, n);
-	fillRand3(arr2, n);
-	printf("%d", maxIndex(arr1, n));
-	
-}
 void fillRand3(int arr[], int size)
 {
-	srand(time(NULL));
 	int i;
 	for (i = 0; i < size; i++)
 		arr[i] = rand() % 2;
@@ -33,6 +14,16 @@ int checkRand3(int arr[], int size)
 		if (arr [i] != 0 && arr [i] != 1)
 			return 0;
 	return 1;
+}
+float meanValue(int arr[], int size)
+{
+	int i;
+	float sum = 0;
+	for(i = 0; i < size; i++)
+		sum += arr[i];
+	sum /= size;
+	return sum;
+	
 }
 int maxValue(int arr[], int size)
 {
@@ -59,11 +50,14 @@ int maxOccurance(int arr[], int size)
 		for (j = i + 1; j < size; j++)
 			if (arr[j] == arr[i])
 				p++;
-		if (p >= q && arr[i] > max)
+		if (p >= q)
 		{
 			q = p;
 			max = arr[i];
 		}
+		if(p == q && arr[i] > max)
+			max = arr[i];
+
 		p = 1;
 	}
 	return max;
