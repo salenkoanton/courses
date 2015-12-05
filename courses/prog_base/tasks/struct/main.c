@@ -41,7 +41,7 @@ int main(void)
 	fflush(stdin);
 	gets(ch);
 	change(&(PZKShumor[size]), ch);
-	print(PZKShumor[size]);
+	print(&(PZKShumor[size]));
 	}
 	return 0;
 }
@@ -60,11 +60,11 @@ void change(struct Post * str, const char * newText)
 	strcpy(str->text, newText);
 }
 
-void print(struct Post str)
+void print(struct Post * str)
 {
 	puts("tema:");
-	puts(str.theme);
+	puts(str->theme);
 	puts("text:");
-	puts(str.text);
-	printf("number of coments: %i\n", str.numberOfKomments);
+	puts(str->text);
+	printf("number of coments: %i\n", str->numberOfKomments);
 }
