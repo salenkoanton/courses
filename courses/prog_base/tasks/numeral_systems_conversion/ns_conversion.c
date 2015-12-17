@@ -9,6 +9,8 @@ char* ns_convert(char* number, unsigned int sourceBase, unsigned int destBase)
 	int j = 0;
 	int bool = 0;
 	l = strlen(number);
+	if (strcmp(number, "0") == 0)
+		return number;
 	while (i < l){
 		if (number[i] == '.') 
 			bool = 1;
