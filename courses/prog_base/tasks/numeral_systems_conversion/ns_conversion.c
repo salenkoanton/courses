@@ -75,7 +75,7 @@ char* ns_convert(char* number, unsigned int sourceBase, unsigned int destBase)
 	}
 	number[i+1]='\0';
 	return number;
-}
+}/*
 int main(void)
 {
 	unsigned int c;
@@ -89,4 +89,4 @@ int main(void)
 	printf("%s \n",a);
 	free(a);
 	return 0;
-}
+}*/
