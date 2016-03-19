@@ -7,6 +7,25 @@ struct korpus_s {
     char * name;
 };
 
+struct aud_s {
+    int numb;
+    clock_t time;
+    int seats;
+};
+
+static aud_t * aud_new(int seats, int numb)
+{
+    aud_t * self = NULL;
+    self = malloc(sizeof(struct aud_s));
+    if (NULL == self)
+        return NULL;
+    self->seats = seats;
+    self->time = clock();
+    self->numb = numb;
+    return self;
+}
+
+
 korpus_t * korpus_new(char * name, int auds, int seats[auds])
 {
     korpus_t * self = NULL;
@@ -57,7 +76,9 @@ int korpus_audsCount(korpus_t * self)
 
 int korpus_aud_numberOfSeats(korpus_t * self, int numb)
 {
-    return aud_numberOfSeats(self->auds[numb]);
+    if (numb < self->audCount && numb >= 0)
+        return aud_numberOfSeats(self->auds[numb]);
+    return -1;
 }
 
 void korpus_free(korpus_t * self)
@@ -66,4 +87,16 @@ void korpus_free(korpus_t * self)
         aud_free(self->auds[j]);
     free(self->name);
     free(self);
+}
+
+void aud_free(aud_t * self)
+{
+    free(self);
+}
+
+aud_t * korpus_get_aud(korpus_t * self, int numb)
+{
+    if (numb < self->audCount && numb >= 0)
+        return self->auds[numb];
+    return NULL;
 }

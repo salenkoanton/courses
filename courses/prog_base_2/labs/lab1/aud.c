@@ -7,25 +7,12 @@ struct aud_s {
     int seats;
 };
 
-aud_t * aud_new(int seats, int numb)
-{
-    aud_t * self = NULL;
-    self = malloc(sizeof(struct aud_s));
-    if (NULL == self)
-        return NULL;
-    self->seats = seats;
-    self->time = clock();
-    self->numb = numb;
-    return self;
-}
 
-void aud_free(aud_t * self)
-{
-    free(self);
-}
 
 int aud_numberOfSeats(aud_t * self)
 {
+    if (self == NULL)
+        return -1;
     return self->seats;
 }
 
