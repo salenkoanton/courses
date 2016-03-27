@@ -26,7 +26,8 @@ void zeroWriter_del(HANDLE * consumers, int size){
 }
 
 HANDLE * zeroWriter_new(int size, int * value){
-    HANDLE consumers[size];
+
+    HANDLE * consumers = malloc(sizeof(HANDLE) * size);
     for(int i = 0; i < size; i++)
         consumers[i] = newThread(zero_writer, &value);
     return consumers;

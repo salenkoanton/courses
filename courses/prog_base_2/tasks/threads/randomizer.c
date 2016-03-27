@@ -17,7 +17,7 @@ void randomizer_del(HANDLE * consumers, int size){
 }
 
 HANDLE * randomizer_new(int size, int * value){
-    HANDLE consumers[size];
+    HANDLE * consumers = malloc(sizeof(HANDLE) * size);
     for(int i = 0; i < size; i++)
         consumers[i] = newThread(randomizer, &value);
     return consumers;
