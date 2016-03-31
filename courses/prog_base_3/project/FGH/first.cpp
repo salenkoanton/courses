@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace sf;
 struct key_data{
-    CircleShape * circle;
+    Sprite * circle;
     int index;
     float time;
 };
@@ -67,30 +67,40 @@ private: struct QueueNode * tail, * head;
 int main(void)
 {
             int count = 0;
-    RenderWindow window(VideoMode(700, 680), "Lesson 19. kychka-pc.ru");
+    RenderWindow window(VideoMode(1366, 768), "Guitar Hero", Style::Fullscreen);
    // CircleShape ** shapes = (CircleShape **)malloc (sizeof(CircleShape *) * 5);
     Queue queue = Queue();
-    CircleShape * shape;
+    Sprite * shape;
     Clock clock_start;
     Image buffer;
-    buffer.create(640, 480, Color::Black);
+    buffer.create(1366, 768, Color::Black);
 
     for (int i = 0; i < 5; i++)
         for (int j = 0; j < 480; j++)
         {
-            buffer.setPixel( i * 80 + 40, j, Color::White);
-            buffer.setPixel( i * 80 + 39, j, Color::White);
-            buffer.setPixel( i * 80 + 41, j, Color::White);
+            buffer.setPixel( i * 80 + 40 + 483, j + 200, Color::White);
+            buffer.setPixel( i * 80 + 39 + 483, j + 200, Color::White);
+            buffer.setPixel( i * 80 + 41 + 483, j + 200, Color::White);
         }
     for (int i = 0; i < 400; i++)
         for (int j = 434; j < 440; j++)
-            buffer.setPixel( i, j, Color::White);
+            buffer.setPixel( i + 483, j + 200, Color::White);
     for (int k = 0; k < 5; k++)
     for (int i = 27 + k * 80; i < 53 + k * 80; i++)
         for (int j = 424; j < 450; j++)
-            buffer.setPixel( i, j, Color::White);
-
-    Texture bufferTexture;
+            buffer.setPixel( i + 483, j + 200, Color::White);
+    Image image;
+    Texture texture, bufferTexture;
+    Sprite button[5];
+    image.loadFromFile("FretButtons.png");
+    texture.loadFromImage(image);
+    for(int i = 0; i < 5; i++)
+    {
+        button[i].setTexture(texture);
+        button[i].setPosition(80 * i + 483, 410 + 200);
+        button[i].setTextureRect(IntRect(i * 690 / 5, 0, 690 / 5, 81));
+        button[i].setScale(400/float(690), 400/float(690));
+    }
     bufferTexture.loadFromImage(buffer);
     Sprite bufferSprite;
     bufferSprite.setTexture(bufferTexture);
@@ -109,15 +119,17 @@ int main(void)
             if( !flag0)
         {
             i = 0;
-             shape = new CircleShape(25.f);
-             shape->setFillColor(Color::Green);
+             shape = new Sprite;
+             shape->setTexture(texture);
+             shape->setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
+             shape->setScale(400/float(690), 400/float(690));
             count++;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
             flag0 = true;
-            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 483, int( -speed * tmpdata->time));
             queue.add(tmpdata);
 
         }
@@ -131,14 +143,16 @@ int main(void)
         {
             i = 1;
              count++;
-             shape = new CircleShape(25.f);
-             shape->setFillColor(Color::Cyan);
+             shape = new Sprite;
+             shape->setTexture(texture);
+             shape->setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
+             shape->setScale(400/float(690), 400/float(690));
             flag1 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 483, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -150,14 +164,16 @@ int main(void)
         {
             i = 2;
              count++;
-             shape = new CircleShape(25.f);
-             shape->setFillColor(Color::Yellow);
+             shape = new Sprite;
+             shape->setTexture(texture);
+             shape->setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
+             shape->setScale(400/float(690), 400/float(690));
             flag2 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 483, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -169,14 +185,16 @@ int main(void)
         {
             i = 3;
              count++;
-             shape = new CircleShape(25.f);
-             shape->setFillColor(Color::Blue);
+             shape = new Sprite;
+             shape->setTexture(texture);
+             shape->setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
+             shape->setScale(400/float(690), 400/float(690));
             flag3 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 483, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -188,14 +206,16 @@ int main(void)
         {
             i = 4;
              count++;
-             shape = new CircleShape(25.f);
-             shape->setFillColor(Color::Red);
+             shape = new Sprite;
+             shape->setTexture(texture);
+             shape->setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
+             shape->setScale(400/float(690), 400/float(690));
             flag4 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 483, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -204,18 +224,7 @@ int main(void)
 
     }
 
-    Image image;
-    Texture texture;
-    Sprite button[5];
-    image.loadFromFile("FretButtons.png");
-    texture.loadFromImage(image);
-    for(int i = 0; i < 5; i++)
-    {
-        button[i].setTexture(texture);
-        button[i].setPosition(80 * i, 410);
-        button[i].setTextureRect(IntRect(i * 690 / 5, 0, 690 / 5, 81));
-        button[i].setScale(400/float(690), 400/float(690));
-    }
+
     Font font;//шрифт
      font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
      Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
@@ -286,7 +295,7 @@ int main(void)
             index = last_key;
             flag0 = false;
             is_good_note = false;
-            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 580))
             {
                 if (queue.get(index)->index == 0)
                 {
@@ -312,7 +321,7 @@ int main(void)
             index = last_key;
             flag1 = false;
             is_good_note = false;
-            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 580))
             {
                 if (queue.get(index)->index == 1)
                 {
@@ -338,7 +347,7 @@ int main(void)
             index = last_key;
             flag2 = false;
             is_good_note = false;
-            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 580))
             {
                 if (queue.get(index)->index == 2)
                 {
@@ -362,7 +371,7 @@ int main(void)
             index = last_key;
             flag3 = false;
             is_good_note = false;
-            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 580))
             {
                 if (queue.get(index)->index == 3)
                 {
@@ -386,7 +395,7 @@ int main(void)
             index = last_key;
             flag4 = false;
             is_good_note = false;
-            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 580))
             {
                 if (queue.get(index)->index == 4)
                 {
@@ -407,7 +416,7 @@ int main(void)
         }
            if (last_key == 0)
             window.close();
-        if ( queue.get(last_key)->circle->getPosition().y > 500)
+        if ( queue.get(last_key)->circle->getPosition().y > 700)
         {
             note_good = 0;
             last_key--;
@@ -419,7 +428,7 @@ int main(void)
         sprintf(strtmp, "%i\nGood note:%i", score, note_good);
         str = std::string(strtmp);
         text.setString("Score:" + str);//задает строку тексту
-        text.setPosition(400, 200);//задаем позицию текста, центр камеры
+        text.setPosition(200, 200);//задаем позицию текста, центр камеры
 
      //   window.setView(view);
         window.clear();
