@@ -1,4 +1,7 @@
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <sstream>
+#include <iostream>
 using namespace sf;
 struct key_data{
     CircleShape * circle;
@@ -15,6 +18,7 @@ struct QueueNode{
 class Queue{
 
 private: struct QueueNode * tail, * head;
+    int cnt;
     public:
     Queue(){
         tail = new struct QueueNode;
@@ -23,13 +27,19 @@ private: struct QueueNode * tail, * head;
         tail->next = NULL;
         head->next = tail;
         head->data = NULL;
+        cnt = 0;
     }
+    int count(){
+        return cnt;
+    }
+
     void add(key_data * data)
     {
         struct QueueNode * tmp = new struct QueueNode;
         tmp->next = head->next;
         tmp->data = data;
         head->next = tmp;
+        cnt++;
     }
     struct key_data * get(int pos)
     {
@@ -39,14 +49,15 @@ private: struct QueueNode * tail, * head;
         return tmp->data;
     }
 
-    struct key_data * del()
+    struct key_data * del(int pos)
     {
         struct QueueNode * tmp = head;
-
-        while(tmp->next->next != tail)
+        if (pos < cnt)
+        for(int i = 0; i < pos; i++)
             tmp = tmp->next;
         struct key_data * data = tmp->next->data;
-        tmp->next = tail;
+        tmp->next = tmp->next->next;
+        cnt--;
         return data;
     }
 
@@ -56,7 +67,7 @@ private: struct QueueNode * tail, * head;
 int main(void)
 {
             int count = 0;
-    RenderWindow window(VideoMode(400, 480), "Lesson 19. kychka-pc.ru");
+    RenderWindow window(VideoMode(700, 680), "Lesson 19. kychka-pc.ru");
    // CircleShape ** shapes = (CircleShape **)malloc (sizeof(CircleShape *) * 5);
     Queue queue = Queue();
     CircleShape * shape;
@@ -83,7 +94,7 @@ int main(void)
     bufferTexture.loadFromImage(buffer);
     Sprite bufferSprite;
     bufferSprite.setTexture(bufferTexture);
-    float speed = 0.25/600;
+    float speed = 0.25/800;
     bool flag0 = false, flag1 = false, flag2 = false, flag3 = false, flag4 = false;
     float start = clock_start.getElapsedTime().asMicroseconds();
     while (!Keyboard::isKeyPressed(Keyboard::Space))
@@ -98,7 +109,7 @@ int main(void)
             if( !flag0)
         {
             i = 0;
-             shape = new CircleShape(30.f);
+             shape = new CircleShape(25.f);
              shape->setFillColor(Color::Green);
             count++;
             tmpdata = new struct key_data;
@@ -106,7 +117,7 @@ int main(void)
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
             flag0 = true;
-            shape->setPosition(i * 80 + 10, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
             queue.add(tmpdata);
 
         }
@@ -120,14 +131,14 @@ int main(void)
         {
             i = 1;
              count++;
-             shape = new CircleShape(30.f);
+             shape = new CircleShape(25.f);
              shape->setFillColor(Color::Cyan);
             flag1 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -139,14 +150,14 @@ int main(void)
         {
             i = 2;
              count++;
-             shape = new CircleShape(30.f);
+             shape = new CircleShape(25.f);
              shape->setFillColor(Color::Yellow);
             flag2 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 10, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -158,14 +169,14 @@ int main(void)
         {
             i = 3;
              count++;
-             shape = new CircleShape(30.f);
+             shape = new CircleShape(25.f);
              shape->setFillColor(Color::Blue);
             flag3 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 10, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -177,14 +188,14 @@ int main(void)
         {
             i = 4;
              count++;
-             shape = new CircleShape(30.f);
+             shape = new CircleShape(25.f);
              shape->setFillColor(Color::Red);
             flag4 = true;
             tmpdata = new struct key_data;
             tmpdata->circle = shape;
             tmpdata->index = i;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            shape->setPosition(i * 80 + 10, int( -speed * tmpdata->time));
+            shape->setPosition(i * 80 + 15, int( -speed * tmpdata->time));
             queue.add(tmpdata);
         }
         }
@@ -195,13 +206,42 @@ int main(void)
 
     Image image;
     Texture texture;
-    Sprite sprite;
-
+    Sprite button[5];
+    image.loadFromFile("FretButtons.png");
+    texture.loadFromImage(image);
+    for(int i = 0; i < 5; i++)
+    {
+        button[i].setTexture(texture);
+        button[i].setPosition(80 * i, 410);
+        button[i].setTextureRect(IntRect(i * 690 / 5, 0, 690 / 5, 81));
+        button[i].setScale(400/float(690), 400/float(690));
+    }
+    Font font;//шрифт
+     font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
+     Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+     text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый
+     text.setStyle(sf::Text::Bold | sf::Text::Underlined);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+    int score = 0;
+    int last_key = queue.count() - 1;
     Clock clock;
+    std::string str;
+    char strtmp[25];
    // image.loadFromFile("images/1.pgn");
    // texture.loadFromImage(image);
    // sprite.setTexture(texture);
     //sprite.setTextureRect(IntRect(0, 0, w, h));
+    clock_start.restart();
+    start = clock_start.getElapsedTime().asMicroseconds();
+    int index;
+    std::stringstream ss;
+    int note_good = 0;
+    //bool flag[5] = {true, true, true, true, true}; //на всяк випадок
+    bool is_good_note;
+    flag0 = true;
+    flag1 = true;
+    flag2 = true;
+    flag3 = true;
+    flag4 = true;
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds();
@@ -214,15 +254,186 @@ int main(void)
             if (event.type == Event::Closed)
                 window.close();
         }
-        for (int i = 0; i <  count; i++)
+        if (!Keyboard::isKeyPressed(Keyboard::A))
+        {
+            button[0].setTextureRect(IntRect(0, 0, 690/5, 81));
+             flag0 = true;
+        }
+        if (!Keyboard::isKeyPressed(Keyboard::S))
+        {
+            button[1].setTextureRect(IntRect(690/5, 0, 690/5, 81));
+            flag1 = true;
+        }
+        if (!Keyboard::isKeyPressed(Keyboard::D))
+        {
+            button[2].setTextureRect(IntRect(690/5*2, 0, 690/5, 81));
+            flag2 = true;
+        }
+        if (!Keyboard::isKeyPressed(Keyboard::K))
+        {
+
+            button[3].setTextureRect(IntRect(690/5*3, 0, 690/5, 81));
+            flag3 = true;
+        }
+        if (!Keyboard::isKeyPressed(Keyboard::L))
+        {
+            button[4].setTextureRect(IntRect(690/5*4, 0, 690/5, 81));
+            flag4 = true;
+        }
+        if (Keyboard::isKeyPressed(Keyboard::A) && flag0)
+        {
+            button[0].setTextureRect(IntRect(0, 164, 690/5, 81));
+            index = last_key;
+            flag0 = false;
+            is_good_note = false;
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            {
+                if (queue.get(index)->index == 0)
+                {
+                    score++;
+                    is_good_note = true;
+                    queue.del(index);
+                    last_key--;
+
+                }
+                index--;
+                if (index == 0) break;
+
+            }
+            if (is_good_note)
+                note_good++;
+            else
+                note_good = 0;
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::S) && flag1)
+        {
+            button[1].setTextureRect(IntRect(690/5, 164, 690/5, 81));
+            index = last_key;
+            flag1 = false;
+            is_good_note = false;
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            {
+                if (queue.get(index)->index == 1)
+                {
+                    score++;
+                    is_good_note = true;
+                    queue.del(index);
+                    last_key--;
+
+                }
+                index--;
+                if (index == 0) break;
+
+            }
+            if (is_good_note)
+                note_good++;
+            else
+                note_good = 0;
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::D) && flag2)
+        {
+            button[2].setTextureRect(IntRect(2*690/5, 164, 690/5, 81));
+            index = last_key;
+            flag2 = false;
+            is_good_note = false;
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            {
+                if (queue.get(index)->index == 2)
+                {
+                    score++;
+                    is_good_note = true;
+                    queue.del(index);
+                    last_key--;
+                }
+                index--;
+                if (index == 0) break;
+
+            }
+            if (is_good_note)
+                note_good++;
+            else
+                note_good = 0;
+        }
+        if (Keyboard::isKeyPressed(Keyboard::K) && flag3)
+        {
+            button[3].setTextureRect(IntRect(3 * 690 / 5, 164, 690/5, 81));
+            index = last_key;
+            flag3 = false;
+            is_good_note = false;
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            {
+                if (queue.get(index)->index == 3)
+                {
+                    score++;
+                    is_good_note = true;
+                    queue.del(index);
+                    last_key--;
+                }
+                index--;
+                if (index == 0) break;
+
+            }
+            if (is_good_note)
+                note_good++;
+            else
+                note_good = 0;
+        }
+        if (Keyboard::isKeyPressed(Keyboard::L) && flag4)
+        {
+            button[4].setTextureRect(IntRect(4*690/5, 164, 690/5, 81));
+            index = last_key;
+            flag4 = false;
+            is_good_note = false;
+            while ( ((*(queue.get(index)->circle)).getPosition().y > 380))
+            {
+                if (queue.get(index)->index == 4)
+                {
+                    score++;
+                    is_good_note = true;
+                    queue.del(index);
+                    last_key--;
+
+                }
+                index--;
+                if (index == 0) break;
+
+            }
+            if (is_good_note)
+                note_good++;
+            else
+                note_good = 0;
+        }
+           if (last_key == 0)
+            window.close();
+        if ( queue.get(last_key)->circle->getPosition().y > 500)
+        {
+            note_good = 0;
+            last_key--;
+        }
+        for (int i = 0; i <  queue.count(); i++)
             queue.get(i)->circle->move(0, time * 0.25);
 
+        //ss << score;
+        sprintf(strtmp, "%i\nGood note:%i", score, note_good);
+        str = std::string(strtmp);
+        text.setString("Score:" + str);//задает строку тексту
+        text.setPosition(400, 200);//задаем позицию текста, центр камеры
 
      //   window.setView(view);
         window.clear();
         window.draw(bufferSprite);
-        for (int i = 0; i <  count; i++)
+         window.draw(text);//рисую этот текст
+         for (int i = 0; i < 5; i++)
+             window.draw(button[i]);
+        for (int i = queue.count() - 1; i >= 0 ; i--)
+        {
+
             window.draw(*(queue.get(i)->circle));
+            if (queue.get(i)->circle->getPosition().y < 0)
+                break;
+        }
 
         window.display();
 
