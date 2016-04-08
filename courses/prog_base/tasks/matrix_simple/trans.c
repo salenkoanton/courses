@@ -9,7 +9,7 @@ void ret_arr(int mat[4][4], int mat1[4][4]);
 void fillRand(int mat[4][4], int mat1[4][4]);
 int main (void)
 {
-	srand (time(NULL));
+	
 	int arr[4][4];
 	int brr[4][4];
 	
@@ -75,6 +75,7 @@ void transposMain(int mat[4][4])
 }*/
 void fillRand(int mat[4][4]/*, int mat1[4][4]*/)
 {
+	srand (time(NULL));
 	int i, j, n = 4;
 	for (i = 0; i < n; i++)
 		for (j = 0; j < n; j++)

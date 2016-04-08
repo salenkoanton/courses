@@ -44,7 +44,7 @@ int satisfies(int a, int b, int c)
 					min = b;
 			
 			}
-			if (min * max < 256) 
+			if (min * max < 256) //return (min * max < 256);
 				return 1;
 			else 
 				return 0;
@@ -99,7 +99,7 @@ int satisfies(int a, int b, int c)
 			
 		}
 	
-	
+	//min = (a < c)?a:c;
 
 }
 }

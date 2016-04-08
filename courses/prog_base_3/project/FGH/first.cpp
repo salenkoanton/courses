@@ -107,11 +107,18 @@ int main(void)
     Sprite bufferSprite;
     bufferSprite.setTexture(bufferTexture);         //set sprite (lines)
     Vector2f vect(0, 0.4);
+    Music music0;
+    if (!music0.openFromFile("music1.ogg"))
+        return -1; // error
+    //music.play();
+    music0.play();
+
     float speed = 0.4/800;                          //number of pixels that moves in 1 microsec
-    bool flag0 = false, flag1 = false, flag2 = false, flag3 = false, flag4 = false; //flags for adding only one note per pressing
+    bool flag0 = false, flag1 = false, flag2 = false, flag3 = false, flag4 = false, music0_flag = true; //flags for adding only one note per pressing
     float start = clock_start.getElapsedTime().asMicroseconds(); //get start
     while (!Keyboard::isKeyPressed(Keyboard::Space)) //scan pressings that will shows you later
     {
+
         int index;
         struct key_data * tmpdata;                  //temp struct for list
         if (Keyboard::isKeyPressed(Keyboard::A)){   //if pressed A creates sprite with spetical color and .x position
@@ -215,8 +222,7 @@ int main(void)
             flag4 = false;
 
     }
-
-
+    music0.stop();
     Font font;//шрифт
      font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
      Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
@@ -227,8 +233,7 @@ int main(void)
     Clock clock;            //new clock for move
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
-    clock_start.restart();
-    start = clock_start.getElapsedTime().asMicroseconds(); //get new start
+
     int index;
     std::stringstream ss;   //stream for text
     int note_strick = 0;      //note strick
@@ -242,18 +247,25 @@ int main(void)
    /* Music music;
     if (!music.openFromFile("music.ogg"))
         return -1; // error*/
-    Music music1;
+   /* Music music1;
     if (!music1.openFromFile("music1.ogg"))
-        return -1; // error
+        return -1; // error*/
     //music.play();
-    music1.play();
+    //music1.play();
+    clock_start.restart();
+    start = clock_start.getElapsedTime().asMicroseconds(); //get new start
     while (window.isOpen())     //start game
     {
 
         float time = clock.getElapsedTime().asMicroseconds(); //get seconds per frame
-        clock.restart();
-        time = time / 800; // set speed
 
+        clock.restart();
+        if (clock_start.getElapsedTime().asMicroseconds() > 650/speed && music0_flag)
+        {
+            music0.play();
+            music0_flag = false;
+        }
+        time = time / 800; // set speed
         Event event;
         while (window.pollEvent(event)) // for closing window
         {
