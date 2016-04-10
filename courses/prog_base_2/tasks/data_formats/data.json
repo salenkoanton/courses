@@ -1,0 +1,16 @@
+[
+	{
+		"name": "Taras",
+		"surname": "Shevchenko",
+		"birthdate": "1992-03-09",
+		"worktime": 2009,
+		"rate": 4.6
+	},
+	{
+		"name": "Tas",
+		"surname": "Shechenko",
+		"birthdate": "1992-03-09",
+		"worktime": 200,
+		"rate": 4.4
+	}
+]

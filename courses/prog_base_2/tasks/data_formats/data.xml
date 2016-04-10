@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<admins>
+    <admin>
+        <name>Taras</name>
+        <surname>Shevchenko</surname>
+        <birthdate>1992-03-09</birthdate>
+        <working_time>9</working_time>
+        <rate>4.6</rate>
+    </admin>
+    <admin>
+        <name>Tar</name>
+        <surname>Shevc</surname>
+        <birthdate>1992-09-03</birthdate>
+        <working_time>2</working_time>
+        <rate>46.5</rate>
+    </admin>
+</admins>
