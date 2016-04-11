@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <iostream>
 using namespace sf;
 struct key_data{                                        //struct for list
@@ -79,7 +80,6 @@ int main(void)
     Clock clock_start;                              //clock for getElapsedTime
     Image buffer;                                   //new image for background (set the line)
     buffer.create(1366, 768, Color::Black);
-
     for (int i = 0; i < 5; i++)
         for (int j = 0; j < 480; j++)
         {
@@ -88,39 +88,57 @@ int main(void)
             buffer.setPixel( i * 80 + 41 + 483, j + 200, Color::White);
         }                                           //end setting line
     Image image;                                    //image for texture, i'll rename it later
-    Texture texture, bufferTexture;                 //textures for buttons
+    Texture notesTexture, bufferTexture, buttonsTexture;                 //textures for buttons
     Sprite button[5], notes[5];                               //buttons
-    image.loadFromFile("FretButtons.png");          //load image
-    texture.loadFromImage(image);
-    texture.setSmooth(true);                        //set smooth
+    image.loadFromFile("RenameToNotes.png");          //load image
+    notesTexture.loadFromImage(image);
+    notesTexture.setSmooth(true);                        //set smooth
+    image.loadFromFile("fretbuttons-3.png");          //load image
+    buttonsTexture.loadFromImage(image);
+    buttonsTexture.setSmooth(true);
     for(int i = 0; i < 5; i++)
     {
-        button[i].setTexture(texture);
+        button[i].setTexture(buttonsTexture);
         button[i].setPosition(80 * i + 483, 410 + 200);
-        button[i].setTextureRect(IntRect(i * 690 / 5, 0, 690 / 5, 81));
-        button[i].setScale(400/float(690), 400/float(690));
-        notes[i].setTexture(texture);
-        notes[i].setTextureRect(IntRect(i * 690 / 5, 81, 690 / 5, 81));
-        notes[i].setScale(400/float(690), 400/float(690));
+        button[i].setTextureRect(IntRect(i * 672 / 5, 0, 672 / 5, 81));
+        button[i].setScale(400/float(672), 400/float(672));
+        notes[i].setTexture(notesTexture);
+        notes[i].setTextureRect(IntRect(i * 664 / 5, 0, 664 / 5, 664 / 5));
+        notes[i].setScale(400/float(664), 400/float(664));
     }                                               //creating of 5 buttons in the bottom
     bufferTexture.loadFromImage(buffer);
     Sprite bufferSprite;
     bufferSprite.setTexture(bufferTexture);         //set sprite (lines)
     Vector2f vect(0, 0.4);
+    Image fireImage;
+    fireImage.loadFromFile("fire_0.png");
+    Texture fireTexture;
+    fireTexture.loadFromImage(fireImage);
+    fireTexture.setSmooth(true);
+    Sprite fireSprite;
+    fireSprite.setTexture(fireTexture);
+    fireSprite.setTextureRect(IntRect(0, 0, 204, 204));
+    fireSprite.setPosition(0, 0);
+
+    window.draw(fireSprite);
+    window.display();
     Music music0;
     if (!music0.openFromFile("music1.ogg"))
         return -1; // error
-    //music.play();
-    music0.play();
-
+    //music0.play();
+    struct key_data * tmpdata;                      // temp struct for list
     float speed = 0.4/800;                          //number of pixels that moves in 1 microsec
     bool flag0 = false, flag1 = false, flag2 = false, flag3 = false, flag4 = false, music0_flag = true; //flags for adding only one note per pressing
     float start = clock_start.getElapsedTime().asMicroseconds(); //get start
-    while (!Keyboard::isKeyPressed(Keyboard::Space)) //scan pressings that will shows you later
+    /*while (!Keyboard::isKeyPressed(Keyboard::Space) && window.isOpen()) //scan pressings that will shows you later
     {
-
+        Event event;
+        while (window.pollEvent(event)) // for closing window
+        {
+            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
+                window.close();
+        }
         int index;
-        struct key_data * tmpdata;                  //temp struct for list
         if (Keyboard::isKeyPressed(Keyboard::A)){   //if pressed A creates sprite with spetical color and .x position
             if( !flag0)
         {
@@ -130,7 +148,7 @@ int main(void)
             tmpdata->isPressed = false;
             tmpdata->index = index;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            pos = new Vector2f((float)index * 80 + 483, -speed * tmpdata->time); // set position ~ time
+            pos = new Vector2f((float)index * 80 + 483, 0); // set position ~ time
             tmpdata->pos = *pos;
             flag0 = true;
             list.add(tmpdata);                      //add in list
@@ -153,7 +171,7 @@ int main(void)
 
             tmpdata->index = index;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            pos = new Vector2f((float)index * 80 + 483, -speed * tmpdata->time);
+            pos = new Vector2f((float)index * 80 + 483, 0);
             tmpdata->pos = *pos;
             list.add(tmpdata);
         }
@@ -173,7 +191,7 @@ int main(void)
 
             tmpdata->index = index;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-             pos = new Vector2f((float)index * 80 + 483, -speed * tmpdata->time);
+             pos = new Vector2f((float)index * 80 + 483, 0);
              tmpdata->pos = *pos;
             list.add(tmpdata);
         }
@@ -193,7 +211,7 @@ int main(void)
 
             tmpdata->index = index;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-            pos = new Vector2f((float)index * 80 + 483, -speed * tmpdata->time);
+            pos = new Vector2f((float)index * 80 + 483, 0);
              tmpdata->pos = *pos;
             list.add(tmpdata);
         }
@@ -213,7 +231,7 @@ int main(void)
 
             tmpdata->index = index;
             tmpdata->time = clock_start.getElapsedTime().asMicroseconds() - start;
-             pos = new Vector2f((float)index * 80 + 483,  -speed * tmpdata->time);
+             pos = new Vector2f((float)index * 80 + 483, 0);
              tmpdata->pos = *pos;
             list.add(tmpdata);
         }
@@ -222,14 +240,44 @@ int main(void)
             flag4 = false;
 
     }
-    music0.stop();
+    music0.stop();*/
     Font font;//шрифт
-     font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
-     Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-     text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый
-     text.setStyle(sf::Text::Bold | sf::Text::Underlined);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+    font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
+    Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+    text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый
+    text.setStyle(sf::Text::Bold | sf::Text::Underlined);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+    /*std::fstream file;
+    file.open("song.ghfile", std::ios::out | std::ios::trunc);
+    file << list.count() << std::endl;
+    for (int i = 0; i < list.count(); i++)
+    {
+        file << list.get(i)->index << std::endl;
+        file << list.get(i)->isPressed << std::endl;
+        file << list.get(i)->pos.x << std::endl;
+        file << list.get(i)->pos.y << std::endl;
+        file << list.get(i)->time << std::endl;
+    }
+    file.close();*/
+    std::fstream file1;
+    file1.open("song.ghfile", std::ios::in);
+    file1 >> count;
+    float pos_x, pos_y;
+    for (int i = 0; i < count; i++)
+    {
+        tmpdata = new key_data;
+        file1 >> tmpdata->index;
+        file1 >> tmpdata->isPressed;
+        file1 >> pos_x;
+        file1 >> pos_y;
+        file1 >> tmpdata->time;
+        pos = new Vector2f(pos_x, pos_y);
+        tmpdata->pos = *pos;
+        list.add(tmpdata);
+    }
+    file1.close();
     int score = 0;
     int first_key = 0;      //first note what will check
+    int one_note_score = 1;
     Clock clock;            //new clock for move
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
@@ -237,21 +285,11 @@ int main(void)
     int index;
     std::stringstream ss;   //stream for text
     int note_strick = 0;      //note strick
-    //bool flag[5] = {true, true, true, true, true}; //на всяк випадок
+    bool flag[5] = {true, true, true, true, true}; //на всяк випадок
+    Keyboard::Key keys[5] = {Keyboard::A, Keyboard::S, Keyboard::D, Keyboard::K, Keyboard::L};
+    int fire[5] = {0, 0, 0, 0, 0};
+    float fire_time[5];
     bool is_good_note; // is pressing correct
-    flag0 = true;
-    flag1 = true;
-    flag2 = true;
-    flag3 = true;
-    flag4 = true; //flags for only one pressing
-   /* Music music;
-    if (!music.openFromFile("music.ogg"))
-        return -1; // error*/
-   /* Music music1;
-    if (!music1.openFromFile("music1.ogg"))
-        return -1; // error*/
-    //music.play();
-    //music1.play();
     clock_start.restart();
     start = clock_start.getElapsedTime().asMicroseconds(); //get new start
     while (window.isOpen())     //start game
@@ -272,209 +310,101 @@ int main(void)
             if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
                 window.close();
         }
-        if (!Keyboard::isKeyPressed(Keyboard::A))
+        for (int i = 0; i < 5; i++)
+        if (!Keyboard::isKeyPressed(keys[i]))
         {
-            button[0].setTextureRect(IntRect(0, 0, 690/5, 81)); //animation
-             flag0 = true;
+             button[i].setTextureRect(IntRect(672 / 5 * i, 0, 672/5, 81)); //animation
+             flag[i]= true;
         }
-        if (!Keyboard::isKeyPressed(Keyboard::S))
+        for (int i = 0; i < 5; i++)
+        if (Keyboard::isKeyPressed(keys[i]) && flag[i])
         {
-            button[1].setTextureRect(IntRect(690/5, 0, 690/5, 81));
-            flag1 = true;
-        }
-        if (!Keyboard::isKeyPressed(Keyboard::D))
-        {
-            button[2].setTextureRect(IntRect(690/5*2, 0, 690/5, 81));
-            flag2 = true;
-        }
-        if (!Keyboard::isKeyPressed(Keyboard::K))
-        {
-
-            button[3].setTextureRect(IntRect(690/5*3, 0, 690/5, 81));
-            flag3 = true;
-        }
-        if (!Keyboard::isKeyPressed(Keyboard::L))
-        {
-            button[4].setTextureRect(IntRect(690/5*4, 0, 690/5, 81));
-            flag4 = true;
-        }
-
-        if (Keyboard::isKeyPressed(Keyboard::A) && flag0)
-        {
-            button[0].setTextureRect(IntRect(0, 164, 690/5, 81)); //animation
+            button[i].setTextureRect(IntRect(672 / 5 * i, 164, 672/5, 81)); //animation
             index = first_key; //get first note
-            flag0 = false;
+            flag[i] = false;
             is_good_note = false;
             if (list.count() != 0)
                 while ( list.get(index)->pos.y > 560) //check all notes what is in area near bottom
                 {
-                    if (list.get(index)->index == 0)  // if corect note
+                    if (list.get(index)->index == i)  // if corect note
                     {
-                        if (!list.get(index)->isPressed)
-                            score++; //increase score
+                        if (!list.get(index)->isPressed){
+                            one_note_score = note_strick / 60 + 1;
+                            if (one_note_score > 4)
+                                one_note_score = 4;
+                            score += one_note_score; //increase score
+                            note_strick++; // increase note strick
+                            fire[i] = 1;
+                            fire_time[i] = 0;
+                        }
                         is_good_note = true;
+
                         list.get(index)->isPressed = true;
-                        //list.del(index); //delete note
                     }
                     index++;
                     if (index >= list.count()) break; // if last note - end
 
                 }
-            if (is_good_note)
-                note_strick++; // increase note strick
-            else
+
+            if (!is_good_note)
+            {
                 note_strick = 0; // else make it zero
+                button[i].setTextureRect(IntRect(672 / 5 * i, 81, 672/5, 81)); //animation
+            }
         }
-
-        if (Keyboard::isKeyPressed(Keyboard::S) && flag1)
-        {
-            button[1].setTextureRect(IntRect(690/5, 164, 690/5, 81));
-            index = first_key;
-            flag1 = false;
-            is_good_note = false;
-            if (list.count() != 0)
-                while (list.get(index)->pos.y > 560)
-                {
-                    if (list.get(index)->index == 1)
-                    {
-                        if (!list.get(index)->isPressed)
-                            score++;
-                        is_good_note = true;
-                        list.get(index)->isPressed = true;
-                        //list.del(index);
-                        //last_key--;
-
-                    }
-                    index++;
-                    if (index >= list.count()) break;
-
-                }
-            if (is_good_note)
-                note_strick++;
-            else
-                note_strick = 0;
-        }
-
-        if (Keyboard::isKeyPressed(Keyboard::D) && flag2)
-        {
-            button[2].setTextureRect(IntRect(2*690/5, 164, 690/5, 81));
-            index = first_key;
-            flag2 = false;
-            is_good_note = false;
-            if (list.count() != 0)
-                while (list.get(index)->pos.y > 560)
-                {
-                    if (list.get(index)->index == 2)
-                    {
-                        if (!list.get(index)->isPressed)
-                            score++;
-                        is_good_note = true;
-                        list.get(index)->isPressed = true;
-                        //list.del(index);
-                        //last_key--;
-                    }
-                    index++;
-                    if (index >= list.count()) break;
-
-                }
-            if (is_good_note)
-                note_strick++;
-            else
-                note_strick = 0;
-        }
-        if (Keyboard::isKeyPressed(Keyboard::K) && flag3)
-        {
-            button[3].setTextureRect(IntRect(3 * 690 / 5, 164, 690/5, 81));
-            index = first_key;
-            flag3 = false;
-            is_good_note = false;
-            if (list.count() != 0)
-                while (list.get(index)->pos.y > 560)
-                {
-                    if (list.get(index)->index == 3)
-                    {
-                        if (!list.get(index)->isPressed)
-                            score++;
-                        is_good_note = true;
-                        list.get(index)->isPressed = true;
-                        //list.del(index);
-                        //last_key--;
-                    }
-                    index++;
-                    if (index >= list.count()) break;
-
-                }
-            if (is_good_note)
-                note_strick++;
-            else
-                note_strick = 0;
-        }
-        if (Keyboard::isKeyPressed(Keyboard::L) && flag4)
-        {
-            button[4].setTextureRect(IntRect(4*690/5, 164, 690/5, 81));
-            index = first_key;
-            flag4 = false;
-            is_good_note = false;
-            if (list.count() != 0)
-                while (list.get(index)->pos.y > 560)
-                {
-                    if (list.get(index)->index == 4)
-                    {
-                        if (!list.get(index)->isPressed)
-                            score++;
-                        is_good_note = true;
-                        list.get(index)->isPressed = true;
-                        //list.del(index);
-                        //last_key--;
-
-                    }
-                    index++;
-                    if (index >= list.count()) break;
-
-                }
-            if (is_good_note)
-                note_strick++;
-            else
-                note_strick = 0;
-        }
-           //if (last_key == 0)
-           // window.close();
         if ( list.count() != 0)
         if ( list.get(first_key)->pos.y > 700) // if you haven't pressed note
         {
             if (!list.get(first_key)->isPressed)
                 note_strick = 0; //zero strick
             list.del(first_key);
-           // first_key++; //increase first note will check
         }
-        for (int i = first_key; i <  list.count(); i++) // move all sprites
+        for (int i = first_key; i <  list.count() && list.get(i)->time < clock_start.getElapsedTime().asMicroseconds(); i++) // move all sprites
             list.get(i)->pos += time * vect;
 
-        //ss << score;
+
         sprintf(strtmp, "%i\nGood note:%i", score, note_strick); // set text
         str = std::string(strtmp);
         text.setString("Score:" + str);//задает строку тексту
         text.setPosition(200, 200);//задаем позицию текста, центр камеры
 
-     //   window.setView(view);
+
         window.clear(); //clear window
-        window.draw(bufferSprite);
+        //window.draw(bufferSprite);
          window.draw(text);//рисую этот текст
          for (int i = 0; i < 5; i++) //drawing
              window.draw(button[i]);
         for (int i = 0; i < list.count() ; i++)
         {
+            if (list.get(i)->pos.y < 160 - speed * time) //drow until the top
+                break;
             if (!list.get(i)->isPressed)
             {
                 notes[list.get(i)->index].setPosition(list.get(i)->pos);
                 window.draw(notes[list.get(i)->index]);
             }
-            if (list.get(i)->pos.y < 200) //drow until the top
-                break;
+
         }
+        for (int i = 0; i < 5; i++)
+            if (fire[i] != 0)
+            {
+                if (fire_time[i] == 0)
+                    fire_time[i] = clock_start.getElapsedTime().asMicroseconds();
+                fireSprite.setTextureRect(IntRect((fire[i] - 1) * 51, 0, 51, 204));
+                switch (fire[i]){
+                    case 1 : fireSprite.setScale(1, 0.2); fireSprite.setPosition(80 * i + 497, 590); break;
+                    case 2 : fireSprite.setScale(1, 0.4); fireSprite.setPosition(80 * i + 497, 550); break;
+                    case 3 : fireSprite.setScale(1, 0.4); fireSprite.setPosition(80 * i + 497, 550); break;
+                    case 4 : fireSprite.setScale(1, 0.2); fireSprite.setPosition(80 * i + 497, 590); break;
+                }
+                if (clock_start.getElapsedTime().asMicroseconds() - fire_time[i] > 30000.0 * fire[i])
+                    fire[i]++;
+                window.draw(fireSprite);
+                if (fire[i] > 4)
+                    fire[i] = 0;
+            }
 
         window.display();
-
     }
 
     return 0;
