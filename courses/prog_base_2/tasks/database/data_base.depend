@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1461516330 source:c:\study\c\code\data_base\admin.c
+	<stdlib.h>
+	<stdio.h>
+	"admin.h"
+
+1461515308 c:\study\c\code\data_base\admin.h
+
+1461522054 source:c:\study\c\code\data_base\main.c
+	<stdio.h>
+	<stdlib.h>
+	"db_manager.h"
+	"admin.h"
+
+1461521968 source:c:\study\c\code\data_base\db_manager.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<sqlite3.h>
+	"db_manager.h"
+	"admin.h"
+
+1461023790 c:\study\c\code\sqlite3\\sqlite3.h
+	<stdarg.h>
+
+1461515341 c:\study\c\code\data_base\db_manager.h
+	"admin.h"
+
