@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1460756261 source:c:\study\c\code\lab2dll2\main.cpp
+	"main.h"
+	<stdlib.h>
+	<stdio.h>
+
+1460756400 c:\study\c\code\lab2dll2\main.h
+	<windows.h>
+	"words.h"
+
+1460756516 c:\study\c\code\lab2dll2\words.h
+
