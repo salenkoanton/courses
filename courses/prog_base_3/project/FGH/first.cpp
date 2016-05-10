@@ -75,6 +75,7 @@ private: struct ListNode * tail, * head;
 
 int main(void)
 {
+
     int count = 0;
     RenderWindow window(VideoMode(1366, 768), "Guitar Hero", Style::Fullscreen);    //create window
     window.setFramerateLimit(120);
@@ -121,11 +122,32 @@ int main(void)
         for (int i = 465 + (679 - j) / 2.5; i < 903 - (679 - j)/2.5; i++)
             buffer.setPixel(i, j,  Color(20, 20, 20));*/
     buffer.createMaskFromColor(Color::Black);
+
+    Image line_image;
+    line_image.create(500, 4, Color::White);
+    for (int i = 0; i < 500; i++)
+    {
+
+        line_image.setPixel(i, 2, Color(255, 255, 255, 150));
+        line_image.setPixel(i, 3, Color(200, 200, 200, 150));
+        line_image.setPixel(i, 1, Color(255, 255, 255, 150));
+        line_image.setPixel(i, 0, Color(200, 200, 200, 150));
+    }
+    Texture line_texture;
+    line_texture.loadFromImage(line_image);
+
+    Vector2f lines_pos[20];
+    for (int i = 0; i < 20; i++)
+        lines_pos[i] = Vector2f(1366 / 2, 220);
+    lines_pos[19].y += 1.0;
+    Sprite line;
+    line.setTexture(line_texture);
+
     Image image;                                    //image for texture, i'll rename it later
     Texture notesTexture, bufferTexture, buttonsTexture, backgroundTexture, fretDeckTexture;                 //textures for buttons
-    Sprite button[5], notes[5], background, fretDeck[658];                               //buttons
+    Sprite button[5], notes[5], background, fretDeck[657];                               //buttons
     image.loadFromFile("fretdeck.png");
-    for (int i = 0; i < 329; i++)
+   /* for (int i = 0; i < 329; i++)
     {
         image.setPixel(i, 1, Color(200, 200, 200));
         image.setPixel(i, 0, Color(200, 200, 200));
@@ -133,15 +155,15 @@ int main(void)
         image.setPixel(i, 4, Color(200, 200, 200));
         image.setPixel(i, 3, Color(200, 200, 200));
         image.setPixel(i, 5, Color(200, 200, 200));
-    }
+    }*/
     fretDeckTexture.loadFromImage(image);
     fretDeckTexture.setSmooth(true);
-    for (int i = 0; i < 658; i++)
+    for (int i = 1; i < 658; i++)
     {
-        fretDeck[i].setTexture(fretDeckTexture);
-        fretDeck[i].setTextureRect(IntRect(0, i, 329, 1));
-        fretDeck[i].setScale(float(400) / 329 * (i + 150) / 495, 1);
-        fretDeck[i].setPosition(483 + (350 - i)/ 2.5, 280 + i);
+        fretDeck[i - 1].setTexture(fretDeckTexture);
+        fretDeck[i - 1].setTextureRect(IntRect(0, i, 329, 1));
+        fretDeck[i - 1].setScale(float(400) / 329 * (i + 150) / 495, 1);
+        fretDeck[i - 1].setPosition(483 + (350 - i)/ 2.5, 280 + i);
     }
     image.loadFromFile("notes.bmp");          //load image
     //image.createMaskFromColor(image.getPixel(0,0));
@@ -191,6 +213,102 @@ int main(void)
     Sprite bufferSprite;
     bufferSprite.setTexture(bufferTexture);         //set sprite (lines)
 
+    image.loadFromFile("score_strick.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture scorecounter_texture;
+    scorecounter_texture.loadFromImage(image);
+    scorecounter_texture.setSmooth(true);
+    Sprite scorecounter;
+    scorecounter.setTexture(scorecounter_texture);
+    scorecounter.setPosition(0, 484);
+
+    image.loadFromFile("note_strick.png");
+    image.createMaskFromColor(image.getPixel(0, 55));
+    Texture note_strickcounter_texture;
+    note_strickcounter_texture.loadFromImage(image);
+    note_strickcounter_texture.setSmooth(true);
+    Sprite note_strickcounter;
+    note_strickcounter.setTexture(note_strickcounter_texture);
+    note_strickcounter.setPosition(93, 660);
+
+    image.loadFromFile("numbers.png");
+    Texture numbers_texture;
+    numbers_texture.loadFromImage(image);
+    numbers_texture.setSmooth(true);
+    Sprite numbers[3][10];
+    for (int i = 0; i < 10; i++)
+    {
+        numbers[0][i].setTexture(numbers_texture);
+        numbers[0][i].setTextureRect(IntRect(22 * i, 0, 22, 26));
+    }
+
+    image.loadFromFile("numbers1.png");
+    Texture numbers_texture1;
+    numbers_texture1.loadFromImage(image);
+    numbers_texture1.setSmooth(true);
+    for (int i = 0; i < 10; i++)
+    {
+        numbers[1][i].setTexture(numbers_texture1);
+        numbers[1][i].setTextureRect(IntRect(26 * i, 0, 26, 34));
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        numbers[2][i].setTexture(numbers_texture1);
+        numbers[2][i].setTextureRect(IntRect(26 * i, 34, 26, 34));
+    }
+
+    image.loadFromFile("x12342468.png");
+    Texture xScore_texture;
+    xScore_texture.loadFromImage(image);
+    xScore_texture.setSmooth(true);
+
+    Sprite xScore[2][4];
+    for (int i = 0; i < 4; i++)
+    {
+        xScore[1][i].setTexture(xScore_texture);
+        xScore[1][i].setTextureRect(IntRect(64 * i, 85, 64, 85));
+        xScore[1][i].setPosition(100, 575);
+
+        xScore[0][i].setTexture(xScore_texture);
+        xScore[0][i].setTextureRect(IntRect(64 * i, 0, 64, 85));
+        xScore[0][i].setPosition(100, 575);
+    }
+
+    image.loadFromFile("lamp.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture lamp_texture;
+    lamp_texture.loadFromImage(image);
+    lamp_texture.setSmooth(true);
+    Sprite lamp[4];
+    for (int i = 0; i < 4; i++)
+    {
+        lamp[i].setTexture(lamp_texture);
+        lamp[i].setTextureRect(IntRect(0, 25 * i, 26, 25));
+    }
+
+    image.loadFromFile("rock_meter.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture rock_meter_texture;
+    rock_meter_texture.loadFromImage(image);
+    rock_meter_texture.setSmooth(true);
+    Sprite rock_meter;
+    rock_meter.setTexture(rock_meter_texture);
+    rock_meter.setPosition(1096, 491);
+    Texture rock_meters_texture[9];
+    Sprite rock_meters[9];
+    for (int i = 0; i < 9; i++)
+    {
+        String tmp;
+        tmp = "meter_0.png";
+        tmp[6] = i + '0';
+        image.loadFromFile(tmp);
+        image.createMaskFromColor(image.getPixel(0, 0));
+        rock_meters_texture[i].loadFromImage(image);
+        rock_meters_texture[i].setSmooth(true);
+        rock_meters[i].setTexture(rock_meters_texture[i]);
+        rock_meters[i].setPosition(1120, 560);
+    }
+
     Image fireImage;
     fireImage.loadFromFile("fire_2.png");
     fireImage.createMaskFromColor(fireImage.getPixel(0,0));
@@ -202,8 +320,8 @@ int main(void)
     fireSprite.setTextureRect(IntRect(0, 0, 960, 768));
     fireSprite.setPosition(0, 0);
 
-    window.draw(fireSprite);
-    window.display();
+    //window.draw(fireSprite);
+    //window.display();
     Music music0;
     if (!music0.openFromFile("music3.ogg"))
         return -1; // error
@@ -326,10 +444,9 @@ int main(void)
     }*/
     //music0.stop();
     Font font;//шрифт
-    font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
+    font.loadFromFile("font/FIRESTARTER.ttf");//передаем нашему шрифту файл шрифта
     Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-    text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый
-    text.setStyle(sf::Text::Bold | sf::Text::Underlined);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+    text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
    /* std::fstream file;
     file.open("song2.ghfile", std::ios::out | std::ios::trunc);
     file << list.count() << std::endl;
@@ -343,7 +460,7 @@ int main(void)
     }
     file.close();*/
     std::fstream file1;
-    file1.open("song2.ghfile", std::ios::in);
+    file1.open("song2tmp7.ghfile", std::ios::in);
     file1 >> count;
     float pos_x, pos_y;
     for (int i = 0; i < count; i++)
@@ -354,7 +471,7 @@ int main(void)
         file1 >> pos_x;
         file1 >> pos_y;
         file1 >> tmpdata->time;
-        pos = new Vector2f(600 + tmpdata->index * 35   , pos_y + 200);
+        pos = new Vector2f(620 + tmpdata->index * 32   , pos_y + 200);
         tmpdata->pos = *pos;
         list.add(tmpdata);
     }
@@ -367,6 +484,11 @@ int main(void)
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
 
+    int count_false = 0;
+    float line_time = 483200;
+    float line_time1 = line_time;
+    Clock clock_line;
+    int playing = 36;
     int index;
     std::stringstream ss;   //stream for text
     int note_strick = 0;      //note strick
@@ -375,20 +497,23 @@ int main(void)
     int fire[5] = {0, 0, 0, 0, 0};
     float fire_time[5];
     bool is_good_note; // is pressing correct
+    //float bef_time;
+    float time = 0.0;
     clock_start.restart();
+    clock_line.restart();
     //start = clock_start.getElapsedTime().asMicroseconds(); //get new start
     while (window.isOpen())     //start game
     {
-
-        float time = clock.getElapsedTime().asMicroseconds(); //get seconds per frame
+        //bef_time = time;
+        time = clock.getElapsedTime().asMicroseconds(); //get seconds per frame
         while (Keyboard::isKeyPressed(Keyboard::Space));
         clock.restart();
-        if (clock_start.getElapsedTime().asMicroseconds() > 650/speed / 0.5 / 1.3 && music0_flag)
+        if (clock_start.getElapsedTime().asMicroseconds() > 650/speed / 0.5 / 1.7  && music0_flag)
         {
             music0.play();
             music0_flag = false;
         }
-        time = time / 1500 ; // set speed
+        time /= 1500 ; // set speed
         Event event;
         while (window.pollEvent(event)) // for closing window
         {
@@ -413,7 +538,7 @@ int main(void)
             for (index = first_key; ; index++) //check all notes what is in area near bottom
                 {
                     if (list.get(index) == NULL) break; // if last note - end
-                    if (list.get(index)->pos.y < 540) break;
+                    if (list.get(index)->pos.y < 500) break;
                     if (list.get(index)->index == i)  // if corect note
                     {
                         if (!list.get(index)->isPressed){
@@ -421,6 +546,8 @@ int main(void)
                             if (one_note_score > 4)
                                 one_note_score = 4;
                             score += one_note_score; //increase score
+                            if (playing < 71)
+                                playing++;
                             note_strick++; // increase note strick
                             fire[i] = 1;
                             fire_time[i] = 0;
@@ -437,8 +564,9 @@ int main(void)
             if (!is_good_note)
             {
                 note_strick = 0; // else make it zero
+                playing -= 3;
                 button[i].setTextureRect(IntRect(672 / 5 * i, 81, 672/5, 81)); //animation
-                music0.setVolume(0);
+                music0.setVolume(50);
             }
         }
         if ( list.count() != 0)
@@ -446,8 +574,10 @@ int main(void)
         {
             if (!list.get(first_key)->isPressed)
             {
+                count_false++;
                 note_strick = 0; //zero strick
-                music0.setVolume(0);
+                playing -= 3;
+                music0.setVolume(50);
             }
             list.del(first_key);
 
@@ -456,21 +586,85 @@ int main(void)
         {
             if (list.get(i)->time > clock_start.getElapsedTime().asMicroseconds()) break;
             if (list.get(i) == NULL) break;
-            list.get(i)->pos += time * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
+            if (list.get(i)->pos.y == 200)
+                list.get(i)->pos += (float)(clock_start.getElapsedTime().asMicroseconds() - list.get(i)->time) / 1500 * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
+            list.get(i)->pos += (time) * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
         }
 
-        sprintf(strtmp, "%i\nNote streak:%i", score, note_strick); // set text
-        str = std::string(strtmp);
-        text.setString("Score:" + str);//задает строку тексту
-        text.setPosition(200, 200);//задаем позицию текста, центр камеры
+        for (int i = 0; i < 20; i++)
+        {
+            if (lines_pos[i].y > 768)
+                lines_pos[i].y = 220;
+            if (lines_pos[i].y != 220)
+                lines_pos[i].y += (time)  * ((lines_pos[i].y - 180) / (float)430) * (float)1.3;
+            else
+            {
+                if (clock_line.getElapsedTime().asMicroseconds() > line_time1)
+                {
+                    lines_pos[i].y += (clock_line.getElapsedTime().asMicroseconds() - line_time1) / 1500  * ((lines_pos[i].y - 180) / (float)430) * (float)1.3;
+                    //clock_line.restart();
+                    line_time1 += line_time;
+                }
+            }
+        }
+
+
+
 
         fretDeckPos += time * 1.37 ;
         window.clear(); //clear window
         window.draw(background);
+        window.draw(scorecounter);
+        window.draw(note_strickcounter);
+        for (int tmpscore = score, i = 0; tmpscore > 0; tmpscore /= 10)
+        {
+            int digit = tmpscore % 10; // 195 40
+            numbers[0][digit].setPosition(195 - i * 22, 484 + 40);
+            window.draw(numbers[0][digit]);
+            i++;
+        }
+
+        for (int tmp_strick = note_strick, i = 0; i < 4; i++)
+        {
+            int digit = tmp_strick % 10;
+            if (i == 0)
+            {
+                numbers[2][digit].setPosition(207, 668);
+                window.draw(numbers[2][digit]);
+            }
+            else {
+                numbers[1][digit].setPosition(205 - i * 26, 668);
+                window.draw(numbers[1][digit]);
+            }
+            tmp_strick /= 10;
+        }
+
+        window.draw(rock_meter);
+        if (playing > 0)
+        {
+            window.draw(rock_meters[playing / 8]);
+        }
+        else
+        {
+            window.draw(rock_meters[0]);
+            text.setString("Looser!!!");
+            text.setPosition(610, 200);
+        }
+
+        if (one_note_score != 1)//____________________________________________________________________________
+            window.draw(xScore[1][one_note_score - 1]);
+
+        for (int i = 0; i < (note_strick % 60) / 10 || one_note_score == 4 || (note_strick % 60 == 0 && one_note_score != 1); i++)
+        {
+            if (i == 5) break;
+            lamp[one_note_score - 1].setPosition(6, 666 - i * 25);
+            window.draw(lamp[one_note_score - 1]);
+        }
+
         for (int i = -30; i < 488; i++)
         {
             int k;
-            k = abs((int((fretDeckPos +  0.84 * (400 - i) * (float(705) / (i + 305))) / 1.1 )) % 658);
+            k = abs((int((fretDeckPos +  0.84 * (400 - i) * (float(705) / (i + 305))) / 1.1 )) % 657);
             fretDeck[k].setScale(float(500) / 329 * (i + 268) / 615, 1);
             fretDeck[k].setPosition(433 + (350 - i)/ 2.5, 280 + i);
 
@@ -492,35 +686,63 @@ int main(void)
 
         }
         window.draw(bufferSprite);
-        window.draw(text);//рисую этот текст
+        for (int i = 0; i < 20; i++)
+        {
+
+            line.setOrigin(250, 2);
+            line.setScale(((lines_pos[i].y - 5) / (float)625), ((lines_pos[i].y - 5) / (float)625));
+           // line.setOrigin(250 * line.getScale().x, 2);
+            line.setPosition(lines_pos[i].x /*+ (50 - notes[list.get(i)->index].getOrigin().x) / 7*/ , lines_pos[i].y /*+  (50 - notes[list.get(i)->index].getOrigin().x) / 2*/);
+            if (lines_pos[i].y < 280)
+            {
+                Color col_s = line.getColor();
+                col_s.a = (lines_pos[i].y - 220) * 256 / 60;
+                line.setColor(col_s);
+
+            }
+            else
+            {
+                Color col_s = line.getColor();
+                col_s.a = 255;
+                line.setColor(col_s);
+            }
+            window.draw(line);
+        }
+        //text.setPosition(200, 200);
+       // window.draw(text);//рисую этот текст
+        text.setColor(Color(200, 183, 107));
+        text.setPosition(650, 150);
+        window.draw(text);
          for (int i = 0; i < 5; i++) //drawing
              window.draw(button[i]);
         for (int i = 0; i < list.count() ; i++)
         {
+            int index_tmp;
+            index_tmp = list.get(i)->index;
             if (list.get(i) == NULL) break;
             if (list.get(i)->pos.y < 220) //drow until the top
                 break;
             if (!list.get(i)->isPressed)
             {
-                notes[list.get(i)->index].setOrigin(0, 0);
-                notes[list.get(i)->index].setScale(((list.get(i)->pos.y - 5) / (float)625) * 500/float(640), ((list.get(i)->pos.y - 5) / (float)625) * 500/float(640));
-                notes[list.get(i)->index].setOrigin(64 * notes[list.get(i)->index].getScale().x, 64 * notes[list.get(i)->index].getScale().x);
-                notes[list.get(i)->index].setPosition(list.get(i)->pos.x /*+ (50 - notes[list.get(i)->index].getOrigin().x) / 7*/ , list.get(i)->pos.y /*+  (50 - notes[list.get(i)->index].getOrigin().x) / 2*/);
-                if (notes[list.get(i)->index].getPosition().y < 280)
+                notes[index_tmp].setOrigin(64, 64);
+                notes[index_tmp].setScale(((list.get(i)->pos.y - 5) / (float)625) * 500/float(640), ((list.get(i)->pos.y - 5) / (float)625) * 500/float(640));
+                //notes[index_tmp].setOrigin(64 * notes[index_tmp].getScale().x, 64 * notes[index_tmp].getScale().x);
+                notes[index_tmp].setPosition(list.get(i)->pos.x /*+ (50 - notes[list.get(i)->index].getOrigin().x) / 7*/ , list.get(i)->pos.y /*+  (50 - notes[list.get(i)->index].getOrigin().x) / 2*/);
+                if (notes[index_tmp].getPosition().y < 280)
                 {
-                    Color col_s = notes[list.get(i)->index].getColor();
-                    col_s.a = (notes[list.get(i)->index].getPosition().y - 220) * 256 / 60;
-                    notes[list.get(i)->index].setColor(col_s);
+                    Color col_s = notes[index_tmp].getColor();
+                    col_s.a = (notes[index_tmp].getPosition().y - 220) * 256 / 60;
+                    notes[index_tmp].setColor(col_s);
 
                 }
                 else
                 {
-                    Color col_s = notes[list.get(i)->index].getColor();
+                    Color col_s = notes[index_tmp].getColor();
                     col_s.a = 255;
-                    notes[list.get(i)->index].setColor(col_s);
+                    notes[index_tmp].setColor(col_s);
 
                 }
-                window.draw(notes[list.get(i)->index]);
+                window.draw(notes[index_tmp]);
             }
 
         }
@@ -548,3 +770,22 @@ int main(void)
 
     return 0;
 }
+/*
+int check(bool in[5], bool out[5])
+{
+    bool flag = false;
+    bool flag1 = false;
+    for (int i = 0; i < 5; i++)
+    {
+        if (in[i] && out[i])
+            flag = true;
+        else
+        {
+            if (in[i] && !flag1)
+                flag1 = true;
+            else return false;
+        }
+    }
+    return true;
+}
+*/
