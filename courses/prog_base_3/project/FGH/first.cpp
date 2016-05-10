@@ -75,7 +75,10 @@ private: struct ListNode * tail, * head;
 
 int main(void)
 {
-
+    int screen_h = 480;
+    int screen_w = 640;
+    float h_sc = float(screen_h) / 768;
+    float w_sc = float(screen_w) / 1366;
     int count = 0;
     RenderWindow window(VideoMode(1366, 768), "Guitar Hero", Style::Fullscreen);    //create window
     window.setFramerateLimit(120);
@@ -145,17 +148,8 @@ int main(void)
 
     Image image;                                    //image for texture, i'll rename it later
     Texture notesTexture, bufferTexture, buttonsTexture, backgroundTexture, fretDeckTexture;                 //textures for buttons
-    Sprite button[5], notes[5], background, fretDeck[657];                               //buttons
+    Sprite button[5], notes[11], background, fretDeck[657];                               //buttons
     image.loadFromFile("fretdeck.png");
-   /* for (int i = 0; i < 329; i++)
-    {
-        image.setPixel(i, 1, Color(200, 200, 200));
-        image.setPixel(i, 0, Color(200, 200, 200));
-        image.setPixel(i, 2, Color(200, 200, 200));
-        image.setPixel(i, 4, Color(200, 200, 200));
-        image.setPixel(i, 3, Color(200, 200, 200));
-        image.setPixel(i, 5, Color(200, 200, 200));
-    }*/
     fretDeckTexture.loadFromImage(image);
     fretDeckTexture.setSmooth(true);
     for (int i = 1; i < 658; i++)
@@ -166,25 +160,8 @@ int main(void)
         fretDeck[i - 1].setPosition(483 + (350 - i)/ 2.5, 280 + i);
     }
     image.loadFromFile("notes.bmp");          //load image
-    //image.createMaskFromColor(image.getPixel(0,0));
     notesTexture.loadFromImage(image);
     notesTexture.setSmooth(true);                        //set smooth
-    /*image.loadFromFile("notes90.psd");          //load image
-    image.createMaskFromColor(image.getPixel(0,0));
-    notesTexture[1].loadFromImage(image);
-    notesTexture[1].setSmooth(true);
-    image.loadFromFile("notes80.psd");          //load image
-    image.createMaskFromColor(image.getPixel(0,0));
-    notesTexture[2].loadFromImage(image);
-    notesTexture[2].setSmooth(true);
-    image.loadFromFile("notes60.psd");          //load image
-    image.createMaskFromColor(image.getPixel(0,0));
-    notesTexture[3].loadFromImage(image);
-    notesTexture[3].setSmooth(true);
-    image.loadFromFile("notes30.psd");          //load image
-    image.createMaskFromColor(image.getPixel(0,0));
-    notesTexture[4].loadFromImage(image);
-    notesTexture[4].setSmooth(true);*/
     image.loadFromFile("fretbuttons-3.png");          //load image
     buttonsTexture.loadFromImage(image);
     buttonsTexture.setSmooth(true);
@@ -200,14 +177,21 @@ int main(void)
         button[i].setPosition(100 * i + 433, 410 + 200);
         button[i].setTextureRect(IntRect(i * 672 / 5, 0, 672 / 5, 81));
         button[i].setScale(500/float(672), 500/float(672));
-        for (int j = 0; j < 5; j++)
-        {
-            notes[i].setTexture(notesTexture);
-            notes[i].setTextureRect(IntRect(i * 640 / 5, 0, 640 / 5, 640 / 5));
-            notes[i].setScale(500/float(640), 500/float(640));
-            notes[i].setOrigin(50, 50);
-        }
+        notes[i].setTexture(notesTexture);
+        notes[i].setTextureRect(IntRect(i * 640 / 5, 0, 640 / 5, 640 / 5));
+        notes[i].setScale(500/float(640), 500/float(640));
+        notes[i].setOrigin(50, 50);
+        notes[i + 5].setTexture(notesTexture);
+        notes[i + 5].setTextureRect(IntRect(i * 640 / 5, 640 / 5 * 2, 640 / 5, 640 / 5));
+        notes[i + 5].setScale(500/float(640), 500/float(640));
+        notes[i + 5].setOrigin(50, 50);
+
     }                                               //creating of 5 buttons in the bottom
+    notes[10].setTexture(notesTexture);
+    notes[10].setTextureRect(IntRect(0 , 640 / 5 * 4, 640 / 5, 640 / 5));
+    notes[10].setScale(500/float(640), 500/float(640));
+    notes[10].setOrigin(50, 50);
+
     bufferTexture.loadFromImage(buffer);
     bufferTexture.setSmooth(true);
     Sprite bufferSprite;
@@ -307,6 +291,46 @@ int main(void)
         rock_meters_texture[i].setSmooth(true);
         rock_meters[i].setTexture(rock_meters_texture[i]);
         rock_meters[i].setPosition(1120, 560);
+    }
+
+    image.loadFromFile("lamp_1.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture rock_load_texture[8];
+    rock_load_texture[0].loadFromImage(image);
+    Sprite rock_load[8];
+    image.loadFromFile("lamp_1_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[1].loadFromImage(image);
+    image.loadFromFile("lamp_2_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[2].loadFromImage(image);
+    image.loadFromFile("lamp_3_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[3].loadFromImage(image);
+    image.loadFromFile("lamp_4_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[4].loadFromImage(image);
+    image.loadFromFile("lamp_5_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[5].loadFromImage(image);
+    image.loadFromFile("lamp_6_.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[6].loadFromImage(image);
+    image.loadFromFile("lamp_0.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    rock_load_texture[7].loadFromImage(image);
+
+    for (int i = 0; i < 4; i++)
+    {
+        rock_load_texture[i].setSmooth(true);
+        rock_load[i].setTexture(rock_load_texture[i]);
+        rock_load[i].setPosition(1100, 495);
+    }
+    for (int i = 4; i < 8; i++)
+    {
+        rock_load_texture[i].setSmooth(true);
+        rock_load[i].setTexture(rock_load_texture[i]);
+        rock_load[i].setPosition(1200, 470);
     }
 
     Image fireImage;
@@ -484,8 +508,13 @@ int main(void)
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
 
+    float rock_time[6] = { 1000000.0 , 1000000.0 , 1000000.0 , 1800000.0 , 2600000.0, 3600000.0};
+    float cur_rock_time = 0;
+    int notes_pleyed_count = 0;
+    int rock_load_type = 0;
+    int rock_load_notes = 70 + 20 * rock_load_type;
     int count_false = 0;
-    float line_time = 483200;
+    float line_time = 483200.0;
     float line_time1 = line_time;
     Clock clock_line;
     int playing = 36;
@@ -496,7 +525,7 @@ int main(void)
     Keyboard::Key keys[5] = {Keyboard::A, Keyboard::S, Keyboard::D, Keyboard::K, Keyboard::L};
     int fire[5] = {0, 0, 0, 0, 0};
     float fire_time[5];
-    bool is_good_note; // is pressing correct
+    bool is_good_note, isInRock = false; // is pressing correct
     //float bef_time;
     float time = 0.0;
     clock_start.restart();
@@ -545,10 +574,17 @@ int main(void)
                             one_note_score = note_strick / 60 + 1;
                             if (one_note_score > 4)
                                 one_note_score = 4;
-                            score += one_note_score; //increase score
+                            score += one_note_score * (1 + isInRock); //increase score
                             if (playing < 71)
                                 playing++;
                             note_strick++; // increase note strick
+                            rock_load_notes--;
+                            if (rock_load_notes <= 0)
+                            {
+                                if (rock_load_type < 5)
+                                    rock_load_type++;
+                                rock_load_notes = rock_load_type * 20 + 70;
+                            }
                             fire[i] = 1;
                             fire_time[i] = 0;
                         }
@@ -565,10 +601,28 @@ int main(void)
             {
                 note_strick = 0; // else make it zero
                 playing -= 3;
+                rock_load_notes = rock_load_type * 20 + 70;
                 button[i].setTextureRect(IntRect(672 / 5 * i, 81, 672/5, 81)); //animation
                 music0.setVolume(50);
             }
         }
+        if (Keyboard::isKeyPressed(Keyboard::J))
+            if (rock_load_type > 1 && !isInRock)
+            {
+                rock_load_type++;
+                isInRock = true;
+                cur_rock_time = clock_start.getElapsedTime().asMicroseconds();
+
+            }
+        if (isInRock)
+            if (clock_start.getElapsedTime().asMicroseconds() - cur_rock_time > rock_time[rock_load_type - 1])
+                cur_rock_time += rock_time[--rock_load_type];
+        if (rock_load_type == 0 && isInRock)
+        {
+            rock_load_notes = 70;
+            isInRock = false;
+        }
+
         if ( list.count() != 0)
         if ( list.get(first_key)->pos.y > 700) // if you haven't pressed note
         {
@@ -576,6 +630,7 @@ int main(void)
             {
                 count_false++;
                 note_strick = 0; //zero strick
+                rock_load_notes = rock_load_type * 20 + 70;
                 playing -= 3;
                 music0.setVolume(50);
             }
@@ -650,9 +705,25 @@ int main(void)
             text.setString("Looser!!!");
             text.setPosition(610, 200);
         }
+        if (rock_load_type > 1 || isInRock)
+            window.draw(rock_load[7]);
+        if (rock_load_type != 0){
+            if (rock_load_type == 1)
+                window.draw(rock_load[0 + isInRock]);
+            else
+            {
+                if (rock_load_type == 2 && isInRock)
+                    window.draw(rock_load[2]);
+                else
+                    window.draw(rock_load[3]);
+                if (rock_load_type != 2)
+                    window.draw(rock_load[rock_load_type + !isInRock]);
+            }
+        }
 
-        if (one_note_score != 1)//____________________________________________________________________________
-            window.draw(xScore[1][one_note_score - 1]);
+
+        //if (one_note_score != 1)//____________________________________________________________________________
+        window.draw(xScore[!isInRock][one_note_score - 1]);
 
         for (int i = 0; i < (note_strick % 60) / 10 || one_note_score == 4 || (note_strick % 60 == 0 && one_note_score != 1); i++)
         {
@@ -713,12 +784,19 @@ int main(void)
         text.setColor(Color(200, 183, 107));
         text.setPosition(650, 150);
         window.draw(text);
-         for (int i = 0; i < 5; i++) //drawing
+        for (int i = 0; i < 5; i++) //drawing
              window.draw(button[i]);
+        notes_pleyed_count = 0;
+        for (int i = 0; i < list.count() && list.get(i)->pos.y > 220; i++)
+            if (list.get(i)->isPressed)
+                notes_pleyed_count++;
         for (int i = 0; i < list.count() ; i++)
         {
             int index_tmp;
-            index_tmp = list.get(i)->index;
+            if (isInRock)
+                index_tmp = 10;
+            else
+                index_tmp = list.get(i)->index + 5 * (rock_load_notes - i + notes_pleyed_count < 20 && rock_load_notes - i + notes_pleyed_count > 0);
             if (list.get(i) == NULL) break;
             if (list.get(i)->pos.y < 220) //drow until the top
                 break;
