@@ -9,7 +9,9 @@ struct key_data{                                        //struct for list
     Vector2f pos;
     int index;
     float time;
+    float tail_time;
     bool isPressed;
+    Vector2f pos_tail;
 };
 
 struct ListNode{
@@ -214,6 +216,18 @@ int main(void)
     Sprite note_strickcounter;
     note_strickcounter.setTexture(note_strickcounter_texture);
     note_strickcounter.setPosition(93, 660);
+
+    image.loadFromFile("tail.png");
+    Texture tailTexture;
+    tailTexture.loadFromImage(image);
+    Sprite tail[6];
+    for (int i = 0; i < 6; i++)
+    {
+        tail[i].setTexture(tailTexture);
+        tail[i].setTextureRect(IntRect(0, i, 18, 1));
+        tail[i].setOrigin(9, 0);
+        tail[i].setScale(2, 1);
+    }
 
     image.loadFromFile("numbers.png");
     Texture numbers_texture;
@@ -484,7 +498,7 @@ int main(void)
     }
     file.close();*/
     std::fstream file1;
-    file1.open("song2tmp7.ghfile", std::ios::in);
+    file1.open("song2tmp11.ghfile", std::ios::in);
     file1 >> count;
     float pos_x, pos_y;
     for (int i = 0; i < count; i++)
@@ -495,12 +509,15 @@ int main(void)
         file1 >> pos_x;
         file1 >> pos_y;
         file1 >> tmpdata->time;
+        file1 >> tmpdata->tail_time;
         pos = new Vector2f(620 + tmpdata->index * 32   , pos_y + 200);
         tmpdata->pos = *pos;
+        pos = new Vector2f(620 + tmpdata->index * 32   , pos_y + 200);
+        tmpdata->pos_tail = *pos;
         list.add(tmpdata);
     }
     file1.close();
-    int score = 0;
+    float score = 0;
     float fretDeckPos = 0.0;
     int first_key = 0;      //first note what will check
     int one_note_score = 1;
@@ -508,6 +525,7 @@ int main(void)
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
 
+    Vector2f tail_pos[5] = {Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200)};
     float rock_time[6] = { 1000000.0 , 1000000.0 , 1000000.0 , 1800000.0 , 2600000.0, 3600000.0};
     float cur_rock_time = 0;
     int notes_pleyed_count = 0;
@@ -554,7 +572,11 @@ int main(void)
         {
              button[i].setTextureRect(IntRect(672 / 5 * i, 0, 672/5, 81)); //animation
              flag[i]= true;
+             tail_pos[i].y = 200;
         }
+        for (int i = 0; i < 5; i++)
+            if (Keyboard::isKeyPressed(keys[i]) && tail_pos[i].y != 200)
+                score += one_note_score * (1 + isInRock) * time / 1000;
         for (int i = 0; i < 5; i++)
         if (Keyboard::isKeyPressed(keys[i]) && flag[i])
         {
@@ -564,6 +586,7 @@ int main(void)
             is_good_note = false;
             //if (list.get(index) == NULL) break;
             if (list.count() != 0)
+
             for (index = first_key; ; index++) //check all notes what is in area near bottom
                 {
                     if (list.get(index) == NULL) break; // if last note - end
@@ -571,6 +594,11 @@ int main(void)
                     if (list.get(index)->index == i)  // if corect note
                     {
                         if (!list.get(index)->isPressed){
+                            if (tail_pos[list.get(index)->index].y == 200)
+                                tail_pos[list.get(index)->index] = list.get(index)->pos_tail;
+                            if (tail_pos[list.get(index)->index].y == 200)
+                                tail_pos[list.get(index)->index].y = 220;
+                            list.get(index)->tail_time = 0;
                             one_note_score = note_strick / 60 + 1;
                             if (one_note_score > 4)
                                 one_note_score = 4;
@@ -604,6 +632,7 @@ int main(void)
                 rock_load_notes = rock_load_type * 20 + 70;
                 button[i].setTextureRect(IntRect(672 / 5 * i, 81, 672/5, 81)); //animation
                 music0.setVolume(50);
+                one_note_score = 1;
             }
         }
         if (Keyboard::isKeyPressed(Keyboard::J))
@@ -633,6 +662,7 @@ int main(void)
                 rock_load_notes = rock_load_type * 20 + 70;
                 playing -= 3;
                 music0.setVolume(50);
+                one_note_score = 1;
             }
             list.del(first_key);
 
@@ -644,6 +674,28 @@ int main(void)
             if (list.get(i)->pos.y == 200)
                 list.get(i)->pos += (float)(clock_start.getElapsedTime().asMicroseconds() - list.get(i)->time) / 1500 * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
             list.get(i)->pos += (time) * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
+
+        }
+
+        for (int i = first_key; i <  list.count(); i++) // move all sprites
+        {
+            if (list.get(i)->time + list.get(i)->tail_time > clock_start.getElapsedTime().asMicroseconds()) break;
+            if (list.get(i) == NULL) break;
+            if (list.get(i)->pos_tail.y == 200)
+                list.get(i)->pos_tail += (float)(clock_start.getElapsedTime().asMicroseconds() - list.get(i)->time - list.get(i)->tail_time) / 1500 * vect[list.get(i)->index] * ((list.get(i)->pos_tail.y - 180) / (float)430) * (float)1.3;
+            list.get(i)->pos_tail += (time) * vect[list.get(i)->index] * ((list.get(i)->pos_tail.y - 180) / (float)430) * (float)1.3;
+
+        }
+        for (int i = 0; i < 5; i++) // move all sprites
+        {
+            if (tail_pos[i].y != 200)
+            {
+                if (tail_pos[i].y < 630)
+                    tail_pos[i] += (time) * vect[i] * ((tail_pos[i].y - 180) / (float)430) * (float)1.3;
+                else
+                    tail_pos[i].y = 200;
+            }
+
         }
 
         for (int i = 0; i < 20; i++)
@@ -671,7 +723,7 @@ int main(void)
         window.draw(background);
         window.draw(scorecounter);
         window.draw(note_strickcounter);
-        for (int tmpscore = score, i = 0; tmpscore > 0; tmpscore /= 10)
+        for (int tmpscore = int(score), i = 0; tmpscore > 0; tmpscore /= 10)
         {
             int digit = tmpscore % 10; // 195 40
             numbers[0][digit].setPosition(195 - i * 22, 484 + 40);
@@ -757,6 +809,43 @@ int main(void)
 
         }
         window.draw(bufferSprite);
+        for (int i = 0; i < 5; i++)
+            if (tail_pos[i].y != 200)
+            {
+                for (int j = 645; j > (int)tail_pos[i].y; j--)
+                {
+                    int tmp_index;
+                    if (isInRock)
+                        tmp_index = 5;
+                    else
+                        tmp_index = i;
+                    tail[tmp_index].setPosition(tail_pos[i].x - (tail_pos[i].y - (float)j)  * vect[i].x, (float)j);
+                    tail[tmp_index].setScale(((tail[tmp_index].getPosition().y - 5) / (float)625) * 2, 1);
+                    if (tail[tmp_index].getPosition().y < 280)
+                    {
+                        Color col_s = tail[tmp_index].getColor();
+                        col_s.a = (tail[tmp_index].getPosition().y - 220) * 256 / 60;
+                        tail[tmp_index].setColor(col_s);
+
+                    }
+                    else if (j - tail_pos[i].y < 30)
+                    {
+                        Color col_s = tail[i].getColor();
+                        col_s.a = (j - tail_pos[i].y) * 256 / 30;
+                        tail[i].setColor(col_s);
+
+                    }
+                    else
+                    {
+                        Color col_s = tail[tmp_index].getColor();
+                        col_s.a = 255;
+                        tail[tmp_index].setColor(col_s);
+
+                    }
+                    if (tail[tmp_index].getPosition().y > 220)
+                    window.draw(tail[tmp_index]);
+                }
+            }
         for (int i = 0; i < 20; i++)
         {
 
@@ -778,6 +867,7 @@ int main(void)
                 line.setColor(col_s);
             }
             window.draw(line);
+
         }
         //text.setPosition(200, 200);
        // window.draw(text);//рисую этот текст
@@ -790,22 +880,62 @@ int main(void)
         for (int i = 0; i < list.count() && list.get(i)->pos.y > 220; i++)
             if (list.get(i)->isPressed)
                 notes_pleyed_count++;
+
         for (int i = 0; i < list.count() ; i++)
         {
             int index_tmp;
+            struct key_data * tmp_note = list.get(i);
             if (isInRock)
                 index_tmp = 10;
             else
-                index_tmp = list.get(i)->index + 5 * (rock_load_notes - i + notes_pleyed_count < 20 && rock_load_notes - i + notes_pleyed_count > 0);
-            if (list.get(i) == NULL) break;
-            if (list.get(i)->pos.y < 220) //drow until the top
+                index_tmp = tmp_note->index + 5 * (rock_load_notes - i + notes_pleyed_count < 20 && rock_load_notes - i + notes_pleyed_count > 0);
+            if (tmp_note == NULL) break;
+            if (tmp_note->pos.y < 220) //drow until the top
                 break;
-            if (!list.get(i)->isPressed)
+            if (!tmp_note->isPressed || tmp_note->pos.y < 655)
             {
                 notes[index_tmp].setOrigin(64, 64);
-                notes[index_tmp].setScale(((list.get(i)->pos.y - 5) / (float)625) * 500/float(640), ((list.get(i)->pos.y - 5) / (float)625) * 500/float(640));
-                //notes[index_tmp].setOrigin(64 * notes[index_tmp].getScale().x, 64 * notes[index_tmp].getScale().x);
-                notes[index_tmp].setPosition(list.get(i)->pos.x /*+ (50 - notes[list.get(i)->index].getOrigin().x) / 7*/ , list.get(i)->pos.y /*+  (50 - notes[list.get(i)->index].getOrigin().x) / 2*/);
+                notes[index_tmp].setScale(((tmp_note->pos.y - 5) / (float)625) * 500/float(640), ((tmp_note->pos.y - 5) / (float)625) * 500/float(640));
+                notes[index_tmp].setPosition(tmp_note->pos.x, tmp_note->pos.y);
+                if (tmp_note->tail_time > 0)
+                {
+
+                    int pos_tail_y;
+
+                    pos_tail_y = tmp_note->pos_tail.y;
+                    for (int j = (int)tmp_note->pos.y; j > (int)pos_tail_y; j--)
+                    {
+                        int index_tail = index_tmp %  5;
+                        if (index_tmp == 10)
+                            index_tail = 5;
+                        tail[index_tail].setPosition(tmp_note->pos_tail.x - (pos_tail_y - (float)j)  * vect[tmp_note->index].x, (float)j);
+                        tail[index_tail].setScale(((tail[index_tail].getPosition().y - 5) / (float)625) * 1.2, 1);
+                        if (j < 280)
+                        {
+                            Color col_s = tail[index_tail].getColor();
+                            col_s.a = (j - 220) * 256 / 60;
+                            tail[index_tail].setColor(col_s);
+
+                        }
+                        else if (j - pos_tail_y < 25)
+                        {
+                            Color col_s = tail[index_tail].getColor();
+                            col_s.a = (j - pos_tail_y) * 256 / 25;
+                            tail[index_tail].setColor(col_s);
+
+                        }
+                        else
+                        {
+                            Color col_s = tail[index_tail].getColor();
+                            col_s.a = 255;
+                            tail[index_tail].setColor(col_s);
+
+                        }
+                        if (j > 220)
+                        window.draw(tail[index_tail]);
+                    }
+                }
+
                 if (notes[index_tmp].getPosition().y < 280)
                 {
                     Color col_s = notes[index_tmp].getColor();
@@ -848,22 +978,3 @@ int main(void)
 
     return 0;
 }
-/*
-int check(bool in[5], bool out[5])
-{
-    bool flag = false;
-    bool flag1 = false;
-    for (int i = 0; i < 5; i++)
-    {
-        if (in[i] && out[i])
-            flag = true;
-        else
-        {
-            if (in[i] && !flag1)
-                flag1 = true;
-            else return false;
-        }
-    }
-    return true;
-}
-*/
