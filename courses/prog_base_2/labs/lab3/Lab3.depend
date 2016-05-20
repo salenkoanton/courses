@@ -1,0 +1,32 @@
+# depslib dependency file v1.0
+1463759953 source:c:\study\c\code\lab3\main.c
+	<stdio.h>
+	<stdlib.h>
+	"list.h"
+	"event.h"
+	"user.h"
+
+1463760057 source:c:\study\c\code\lab3\list.c
+	<stdlib.h>
+	"list.h"
+	"event.h"
+
+1463761554 c:\study\c\code\lab3\list.h
+	"event.h"
+
+1463759283 source:c:\study\c\code\lab3\event.c
+	"event.h"
+	<stdlib.h>
+	<stdio.h>
+
+1463759674 c:\study\c\code\lab3\event.h
+	"user.h"
+
+1463761570 c:\study\c\code\lab3\user.h
+	"event.h"
+	"list.h"
+
+1463761486 source:c:\study\c\code\lab3\user.c
+	"user.h"
+	<stdlib.h>
+
