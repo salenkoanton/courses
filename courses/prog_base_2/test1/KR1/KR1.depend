@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1463827187 source:c:\study\c\code\kr1\list.c
+	<stdlib.h>
+	"list.h"
+
+1463827211 c:\study\c\code\kr1\list.h
+
+1463831931 source:c:\study\c\code\kr1\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<setjmp.h>
+	<cmocka.h>
+	"list.h"
+	"onlineTV.h"
+
+1463831882 c:\study\c\code\kr1\onlinetv.h
+	"list.h"
+
+1463831866 source:c:\study\c\code\kr1\onlinetv.c
+	<string.h>
+	<stdlib.h>
+	"onlineTV.h"
+	"list.h"
+
