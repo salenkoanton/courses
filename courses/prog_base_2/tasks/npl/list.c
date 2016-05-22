@@ -18,7 +18,7 @@ void * list_get(list_t list, int pos)
 {
     struct list_node_s * cur_node = list->head->next;
     if (list->tail == cur_node)
-        return INT_MIN;
+        return NULL;
     if (pos >= list->size )
     {
         pos = list->size - 1;
@@ -65,7 +65,7 @@ void * list_del(list_t list, int pos)
     void * data;
     struct list_node_s * cur_node = list->head->next;
     if (list->tail == cur_node)
-        return INT_MIN;
+        return NULL;
     if (pos >= list->size )
     {
         pos = list->size - 1;
@@ -85,7 +85,7 @@ void * list_change(list_t list, void * data, int pos)
     void * tmp_data;
     struct list_node_s * cur_node = list->head->next;
     if (list->tail == cur_node)
-        return INT_MIN;
+        return NULL;
     if (pos >= list->size )
     {
         pos = list->size - 1;
