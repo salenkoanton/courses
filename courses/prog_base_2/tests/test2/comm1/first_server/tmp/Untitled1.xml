@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persons>
+  <person>
+    <name>Taras</name>
+    <surname>Shevchenko</surname>
+    <birthdate>1789-03-09</birthdate>
+    <age>29</age>
+    <experience_age>4.600000</experience_age>
+    <work>
+      <shop_name>KFC</shop_name>
+    </work>
+  </person>
+  <person>
+    <name>Ruslan</name>
+    <surname>Haduniak</surname>
+    <birthdate>1992-03-09</birthdate>
+    <age>24</age>
+    <experience_age>10.600000</experience_age>
+    <work>
+      <shop_name>McDonalds</shop_name>
+    </work>
+  </person>
+  <person>
+    <name>Stas</name>
+    <surname>Samokhvalenko</surname>
+    <birthdate>1998-18-08</birthdate>
+    <age>17</age>
+    <experience_age>0.000000</experience_age>
+    <work>
+      <shop_name>Vilna_kasa</shop_name>
+    </work>
+  </person>
+</persons>
