@@ -1,10 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/System/Time.hpp>
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <math.h>
+#include <stdlib.h>
+#include "menu.h"
+#include "game.h"
 using namespace sf;
+int results(RenderWindow &window, int score, bool isCareer, float good_notes, int max_notes, Player * player, Font font, int conc);
+int pause(Keyboard::Key * keys, RenderWindow &window, Font font);
 struct key_data{                                        //struct for list
     Vector2f pos;
     int index;
@@ -75,15 +82,15 @@ private: struct ListNode * tail, * head;
 };
 
 
-int main(void)
+int game(RenderWindow &window, Keyboard::Key * keys, Player * player, int song_id, bool isCareer, char * file_music, char * file_notes, int start_pause_time, int conc)
 {
-    int screen_h = 480;
-    int screen_w = 640;
-    float h_sc = float(screen_h) / 768;
-    float w_sc = float(screen_w) / 1366;
+    srand(time(NULL));
+    //int screen_h = 480;
+    //int screen_w = 640;
+    //float h_sc = float(screen_h) / 768;
+    //float w_sc = float(screen_w) / 1366;
     int count = 0;
-    RenderWindow window(VideoMode(1366, 768), "Guitar Hero", Style::Fullscreen);    //create window
-    window.setFramerateLimit(120);
+
     List list = List();                             //list for sprites
     Vector2f * pos;                                 //temp sprite for including in list
     Clock clock_start;                              //clock for getElapsedTime
@@ -167,12 +174,40 @@ int main(void)
     image.loadFromFile("fretbuttons-3.png");          //load image
     buttonsTexture.loadFromImage(image);
     buttonsTexture.setSmooth(true);
-    image.loadFromFile("background.jpg");
+    char buff[20];
+    sprintf(buff, "background%i.jpg", rand() % 10);
+    image.loadFromFile(buff);
     backgroundTexture.loadFromImage(image);
     backgroundTexture.setSmooth(true);
     background.setTexture(backgroundTexture);
-    background.setTextureRect(IntRect(0, 0, 1280, 720));
-    background.setScale(1366 / (float) 1280, 768 / (float) 720);
+    background.setScale(1366 / (float) 800, 768 / (float) 600);
+    /*switch (rand() % 3) {
+    case 0:
+        image.loadFromFile("763.jpg");
+        backgroundTexture.loadFromImage(image);
+        backgroundTexture.setSmooth(true);
+        background.setTexture(backgroundTexture);
+        background.setScale(1366 / (float) 910, 768 / (float) 512);
+        break;
+    case 1:
+        image.loadFromFile("background.jpg");
+        backgroundTexture.loadFromImage(image);
+        backgroundTexture.setSmooth(true);
+        background.setTexture(backgroundTexture);
+        background.setScale(1366 / (float) 1280, 768 / (float) 720);
+        break;
+    case 2:
+        image.loadFromFile("background2.jpg");
+        backgroundTexture.loadFromImage(image);
+        backgroundTexture.setSmooth(true);
+        background.setTexture(backgroundTexture);
+        background.setScale(1366 / (float) 3888, 768 / (float) 2592);
+        break;
+    default:
+        break;
+    }*/
+    //image.loadFromFile("background.jpg");
+
     for(int i = 0; i < 5; i++)
     {
         button[i].setTexture(buttonsTexture);
@@ -208,6 +243,19 @@ int main(void)
     scorecounter.setTexture(scorecounter_texture);
     scorecounter.setPosition(0, 484);
 
+   /* image.loadFromFile("firetorch.jpg");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture fire1Texture;
+    fire1Texture.loadFromImage(image);
+    fire1Texture.setSmooth(true);
+    Sprite fire1[36];
+    for (int i = 0; i < 36; i++)
+    {
+        fire1[i].setTexture(fire1Texture);
+        fire1[i].setTextureRect(IntRect(i % 6 * 3072 / 6, i / 6 * 3072 / 6, 3072 / 6, 3072 / 6));
+        fire1[i].setScale(float(150) / 3072 * 6, float(150) / 3072 * 6);
+    }*/
+
     image.loadFromFile("note_strick.png");
     image.createMaskFromColor(image.getPixel(0, 55));
     Texture note_strickcounter_texture;
@@ -220,8 +268,8 @@ int main(void)
     image.loadFromFile("tail.png");
     Texture tailTexture;
     tailTexture.loadFromImage(image);
-    Sprite tail[6];
-    for (int i = 0; i < 6; i++)
+    Sprite tail[7];
+    for (int i = 0; i < 7; i++)
     {
         tail[i].setTexture(tailTexture);
         tail[i].setTextureRect(IntRect(0, i, 18, 1));
@@ -270,6 +318,19 @@ int main(void)
         xScore[0][i].setTexture(xScore_texture);
         xScore[0][i].setTextureRect(IntRect(64 * i, 0, 64, 85));
         xScore[0][i].setPosition(100, 575);
+    }
+
+    image.loadFromFile("thunder1.png");
+    image.createMaskFromColor(image.getPixel(0, 0));
+    Texture thunder_texture;
+    thunder_texture.loadFromImage(image);
+    thunder_texture.setSmooth(true);
+    Sprite thunder[6];
+    for (int i = 0; i < 6; i++)
+    {
+        thunder[i].setTexture(thunder_texture);
+        thunder[i].setTextureRect(IntRect(thunder_texture.getSize().x / 6 * i, 0, thunder_texture.getSize().x / 6, thunder_texture.getSize().y));
+        thunder[i].setPosition(0, 0);
     }
 
     image.loadFromFile("lamp.png");
@@ -361,14 +422,23 @@ int main(void)
     //window.draw(fireSprite);
     //window.display();
     Music music0;
-    if (!music0.openFromFile("music3.ogg"))
+    if (!music0.openFromFile(file_music))
         return -1; // error
-   // music0.play();
+    music0.play();
+    music0.pause();
     bool  music0_flag = true;
     struct key_data * tmpdata;                      // temp struct for list
     float speed = 0.4/800;                          //number of pixels that moves in 1 microsec
     /*bool flag0 = false, flag1 = false, flag2 = false, flag3 = false, flag4 = false; //flags for adding only one note per pressing
-    while (!Keyboard::isKeyPressed(Keyboard::Tab));
+    while (!Keyboard::isKeyPressed(Keyboard::LShift))
+    {
+        Event event;
+        while (window.pollEvent(event)) // for closing window
+        {
+            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
+                window.close();
+        }
+    }
     float start = clock_start.getElapsedTime().asMicroseconds(); //get start
     while (!Keyboard::isKeyPressed(Keyboard::Space) && window.isOpen()) //scan pressings that will shows you later
     {
@@ -485,8 +555,8 @@ int main(void)
     font.loadFromFile("font/FIRESTARTER.ttf");//передаем нашему шрифту файл шрифта
     Text text("", font, 40);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
     text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-   /* std::fstream file;
-    file.open("song2.ghfile", std::ios::out | std::ios::trunc);
+    /*std::fstream file;
+    file.open("song5.ghfile", std::ios::out | std::ios::trunc);
     file << list.count() << std::endl;
     for (int i = 0; i < list.count(); i++)
     {
@@ -495,10 +565,12 @@ int main(void)
         file << list.get(i)->pos.x << std::endl;
         file << list.get(i)->pos.y << std::endl;
         file << list.get(i)->time << std::endl;
+        file << 0 << std::endl;
     }
-    file.close();*/
+    file.close();
+}*/
     std::fstream file1;
-    file1.open("song2tmp11.ghfile", std::ios::in);
+    file1.open(file_notes, std::ios::in);
     file1 >> count;
     float pos_x, pos_y;
     for (int i = 0; i < count; i++)
@@ -525,7 +597,18 @@ int main(void)
     std::string str;        //string for text
     char strtmp[50];        //temp string for text
 
+    Text max_score("", font, 30);
+    max_score.setColor(text.getColor());
+
+    sprintf(strtmp, "%i:%i\n%i", int(music0.getDuration().asSeconds() - music0.getPlayingOffset().asSeconds()) / 60, int(music0.getDuration().asSeconds() - music0.getPlayingOffset().asSeconds()) % 60, player->get_score(song_id));
+    max_score.setString(strtmp);
+    max_score.setPosition(1260, 100);
+    int fire1_count[5] = {0};
+    int cur_thunder = 0;
+    float thunder_time = 100000;
+    float cur_thunder_time = 0;
     Vector2f tail_pos[5] = {Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200), Vector2f(0, 200)};
+    bool tail_is_pressed[5] = {false, false, false, false, false};
     float rock_time[6] = { 1000000.0 , 1000000.0 , 1000000.0 , 1800000.0 , 2600000.0, 3600000.0};
     float cur_rock_time = 0;
     int notes_pleyed_count = 0;
@@ -535,12 +618,12 @@ int main(void)
     float line_time = 483200.0;
     float line_time1 = line_time;
     Clock clock_line;
-    int playing = 36;
+    int playing = 56;
+    int good_notes = 0;
     int index;
     std::stringstream ss;   //stream for text
     int note_strick = 0;      //note strick
     bool flag[5] = {true, true, true, true, true}; //на всяк випадок
-    Keyboard::Key keys[5] = {Keyboard::A, Keyboard::S, Keyboard::D, Keyboard::K, Keyboard::L};
     int fire[5] = {0, 0, 0, 0, 0};
     float fire_time[5];
     bool is_good_note, isInRock = false; // is pressing correct
@@ -548,14 +631,18 @@ int main(void)
     float time = 0.0;
     clock_start.restart();
     clock_line.restart();
+    float pauseTime = 0;
+    bool isGame = true;
+    int max_notes = 0;
+    //music0.pause();
     //start = clock_start.getElapsedTime().asMicroseconds(); //get new start
-    while (window.isOpen())     //start game
+    while (window.isOpen() && isGame)     //start game
     {
         //bef_time = time;
         time = clock.getElapsedTime().asMicroseconds(); //get seconds per frame
-        while (Keyboard::isKeyPressed(Keyboard::Space));
+       // while (Keyboard::isKeyPressed(Keyboard::Space));
         clock.restart();
-        if (clock_start.getElapsedTime().asMicroseconds() > 650/speed / 0.5 / 1.7  && music0_flag)
+        if (clock_start.getElapsedTime().asMicroseconds() + pauseTime > start_pause_time/speed / 0.5 / 1.7  && music0_flag) // 650/speed / 0.5 / 1.7 for bat 580/speed / 0.5 / 1.7 for scorp
         {
             music0.play();
             music0_flag = false;
@@ -564,7 +651,7 @@ int main(void)
         Event event;
         while (window.pollEvent(event)) // for closing window
         {
-            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
+            if (event.type == Event::Closed)
                 window.close();
         }
         for (int i = 0; i < 5; i++)
@@ -572,11 +659,12 @@ int main(void)
         {
              button[i].setTextureRect(IntRect(672 / 5 * i, 0, 672/5, 81)); //animation
              flag[i]= true;
-             tail_pos[i].y = 200;
+             tail_is_pressed[i] = false;
+            // tail_pos[i].y = 200;
         }
         for (int i = 0; i < 5; i++)
             if (Keyboard::isKeyPressed(keys[i]) && tail_pos[i].y != 200)
-                score += one_note_score * (1 + isInRock) * time / 1000;
+                score += one_note_score * (1 + isInRock) * time / 1000 * (1 + isCareer * player->get_guitar());
         for (int i = 0; i < 5; i++)
         if (Keyboard::isKeyPressed(keys[i]) && flag[i])
         {
@@ -589,23 +677,34 @@ int main(void)
 
             for (index = first_key; ; index++) //check all notes what is in area near bottom
                 {
-                    if (list.get(index) == NULL) break; // if last note - end
-                    if (list.get(index)->pos.y < 500) break;
-                    if (list.get(index)->index == i)  // if corect note
+                    key_data * data = list.get(index);
+                    if (data == NULL) break; // if last note - end
+                    if (data->pos.y < 500) break;
+                    if (data->index == i)  // if corect note
                     {
-                        if (!list.get(index)->isPressed){
-                            if (tail_pos[list.get(index)->index].y == 200)
-                                tail_pos[list.get(index)->index] = list.get(index)->pos_tail;
-                            if (tail_pos[list.get(index)->index].y == 200)
-                                tail_pos[list.get(index)->index].y = 220;
-                            list.get(index)->tail_time = 0;
+                        if (!data->isPressed){
+                            if (tail_pos[data->index].y == 200 || !tail_is_pressed[data->index])
+                            {
+                                tail_pos[data->index] = data->pos_tail;
+                                tail_is_pressed[data->index] = true;
+                            }
+                            if (tail_pos[data->index].y == 200)
+                                tail_pos[data->index].y = 220;
+                            if (tail_pos[data->index].y - data->pos.y > -5)
+                            {
+                                tail_is_pressed[data->index] = false;
+                                tail_pos[data->index].y = 200;
+                            }
+                            data->tail_time = 0;
                             one_note_score = note_strick / 60 + 1;
                             if (one_note_score > 4)
                                 one_note_score = 4;
-                            score += one_note_score * (1 + isInRock); //increase score
-                            if (playing < 71)
+                            score += one_note_score * (1 + isInRock) * (1 + isCareer * player->get_guitar()); //increase score
+                            if (playing < 116)
                                 playing++;
                             note_strick++; // increase note strick
+                            if (note_strick > max_notes)
+                                max_notes = note_strick;
                             rock_load_notes--;
                             if (rock_load_notes <= 0)
                             {
@@ -618,7 +717,7 @@ int main(void)
                         }
                         is_good_note = true;
                         music0.setVolume(100);
-                        list.get(index)->isPressed = true;
+                        data->isPressed = true;
                     }
 
 
@@ -635,16 +734,16 @@ int main(void)
                 one_note_score = 1;
             }
         }
-        if (Keyboard::isKeyPressed(Keyboard::J))
+        if (Keyboard::isKeyPressed(keys[5]))
             if (rock_load_type > 1 && !isInRock)
             {
                 rock_load_type++;
                 isInRock = true;
-                cur_rock_time = clock_start.getElapsedTime().asMicroseconds();
+                cur_rock_time = clock_start.getElapsedTime().asMicroseconds() + pauseTime;
 
             }
         if (isInRock)
-            if (clock_start.getElapsedTime().asMicroseconds() - cur_rock_time > rock_time[rock_load_type - 1])
+            if (clock_start.getElapsedTime().asMicroseconds() + pauseTime - cur_rock_time > rock_time[rock_load_type - 1])
                 cur_rock_time += rock_time[--rock_load_type];
         if (rock_load_type == 0 && isInRock)
         {
@@ -658,32 +757,38 @@ int main(void)
             if (!list.get(first_key)->isPressed)
             {
                 count_false++;
+                if (max_notes < note_strick)
+                    max_notes = note_strick;
                 note_strick = 0; //zero strick
                 rock_load_notes = rock_load_type * 20 + 70;
                 playing -= 3;
                 music0.setVolume(50);
                 one_note_score = 1;
+                tail_pos[list.get(first_key)->index] = list.get(first_key)->pos_tail;
+                good_notes++;
             }
-            list.del(first_key);
+            delete list.del(first_key);
 
         }
         for (int i = first_key; i <  list.count(); i++) // move all sprites
         {
-            if (list.get(i)->time > clock_start.getElapsedTime().asMicroseconds()) break;
-            if (list.get(i) == NULL) break;
-            if (list.get(i)->pos.y == 200)
-                list.get(i)->pos += (float)(clock_start.getElapsedTime().asMicroseconds() - list.get(i)->time) / 1500 * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
-            list.get(i)->pos += (time) * vect[list.get(i)->index] * ((list.get(i)->pos.y - 180) / (float)430) * (float)1.3;
+            key_data * data = list.get(i);
+            if (data->time > clock_start.getElapsedTime().asMicroseconds() + pauseTime) break;
+            if (data == NULL) break;
+            if (data->pos.y == 200)
+               data->pos += (float)(clock_start.getElapsedTime().asMicroseconds() + pauseTime - data->time) / 1500 * vect[data->index] * ((data->pos.y - 180) / (float)430) * (float)1.3;
+            data->pos += (time) * vect[data->index] * ((data->pos.y - 180) / (float)430) * (float)1.3;
 
         }
 
         for (int i = first_key; i <  list.count(); i++) // move all sprites
         {
-            if (list.get(i)->time + list.get(i)->tail_time > clock_start.getElapsedTime().asMicroseconds()) break;
-            if (list.get(i) == NULL) break;
-            if (list.get(i)->pos_tail.y == 200)
-                list.get(i)->pos_tail += (float)(clock_start.getElapsedTime().asMicroseconds() - list.get(i)->time - list.get(i)->tail_time) / 1500 * vect[list.get(i)->index] * ((list.get(i)->pos_tail.y - 180) / (float)430) * (float)1.3;
-            list.get(i)->pos_tail += (time) * vect[list.get(i)->index] * ((list.get(i)->pos_tail.y - 180) / (float)430) * (float)1.3;
+            key_data * data = list.get(i);
+            if (data->time + data->tail_time > clock_start.getElapsedTime().asMicroseconds() + pauseTime) break;
+            if (data == NULL) break;
+            if (data->pos_tail.y == 200)
+                data->pos_tail += (float)(clock_start.getElapsedTime().asMicroseconds() + pauseTime - data->time - data->tail_time) / 1500 * vect[data->index] * ((data->pos_tail.y - 180) / (float)430) * (float)1.3;
+            data->pos_tail += (time) * vect[data->index] * ((data->pos_tail.y - 180) / (float)430) * (float)1.3;
 
         }
         for (int i = 0; i < 5; i++) // move all sprites
@@ -693,7 +798,10 @@ int main(void)
                 if (tail_pos[i].y < 630)
                     tail_pos[i] += (time) * vect[i] * ((tail_pos[i].y - 180) / (float)430) * (float)1.3;
                 else
+                {
                     tail_pos[i].y = 200;
+                    tail_is_pressed[i] = false;
+                }
             }
 
         }
@@ -749,13 +857,18 @@ int main(void)
         window.draw(rock_meter);
         if (playing > 0)
         {
-            window.draw(rock_meters[playing / 8]);
+            window.draw(rock_meters[playing / 13]);
         }
         else
         {
             window.draw(rock_meters[0]);
             text.setString("Looser!!!");
-            text.setPosition(610, 200);
+            text.setPosition(590, 200);
+            if (isCareer)
+            {
+                while (clock.getElapsedTime().asMicroseconds() < 1000000);
+                return 0;
+            }
         }
         if (rock_load_type > 1 || isInRock)
             window.draw(rock_load[7]);
@@ -815,10 +928,13 @@ int main(void)
                 for (int j = 645; j > (int)tail_pos[i].y; j--)
                 {
                     int tmp_index;
+
                     if (isInRock)
                         tmp_index = 5;
                     else
                         tmp_index = i;
+                    if (!tail_is_pressed[i])
+                        tmp_index = 6;
                     tail[tmp_index].setPosition(tail_pos[i].x - (tail_pos[i].y - (float)j)  * vect[i].x, (float)j);
                     tail[tmp_index].setScale(((tail[tmp_index].getPosition().y - 5) / (float)625) * 2, 1);
                     if (tail[tmp_index].getPosition().y < 280)
@@ -828,13 +944,7 @@ int main(void)
                         tail[tmp_index].setColor(col_s);
 
                     }
-                    else if (j - tail_pos[i].y < 30)
-                    {
-                        Color col_s = tail[i].getColor();
-                        col_s.a = (j - tail_pos[i].y) * 256 / 30;
-                        tail[i].setColor(col_s);
 
-                    }
                     else
                     {
                         Color col_s = tail[tmp_index].getColor();
@@ -842,6 +952,15 @@ int main(void)
                         tail[tmp_index].setColor(col_s);
 
                     }
+                    if (j - tail_pos[i].y < 30)
+                    {
+                        tail[tmp_index].setScale(tail[tmp_index].getScale().x * sqrt(1 - (30 - j + tail_pos[i].y) * (30 - j + tail_pos[i].y)/ 30/ 30)  , 1);
+                        Color col_s = tail[i].getColor();
+                        col_s.a = (j - tail_pos[i].y) * col_s.a / 30;
+                        tail[i].setColor(col_s);
+
+                    }
+
                     if (tail[tmp_index].getPosition().y > 220)
                     window.draw(tail[tmp_index]);
                 }
@@ -852,8 +971,8 @@ int main(void)
             line.setOrigin(250, 2);
             line.setScale(((lines_pos[i].y - 5) / (float)625), ((lines_pos[i].y - 5) / (float)625));
            // line.setOrigin(250 * line.getScale().x, 2);
-            line.setPosition(lines_pos[i].x /*+ (50 - notes[list.get(i)->index].getOrigin().x) / 7*/ , lines_pos[i].y /*+  (50 - notes[list.get(i)->index].getOrigin().x) / 2*/);
-            if (lines_pos[i].y < 280)
+            line.setPosition(lines_pos[i].x , lines_pos[i].y);
+           if (lines_pos[i].y < 280)
             {
                 Color col_s = line.getColor();
                 col_s.a = (lines_pos[i].y - 220) * 256 / 60;
@@ -903,7 +1022,7 @@ int main(void)
                     int pos_tail_y;
 
                     pos_tail_y = tmp_note->pos_tail.y;
-                    for (int j = (int)tmp_note->pos.y; j > (int)pos_tail_y; j--)
+                    for (int j = (int)tmp_note->pos.y; j > (int)pos_tail_y && j > 220; j--)
                     {
                         int index_tail = index_tmp %  5;
                         if (index_tmp == 10)
@@ -917,13 +1036,7 @@ int main(void)
                             tail[index_tail].setColor(col_s);
 
                         }
-                        else if (j - pos_tail_y < 25)
-                        {
-                            Color col_s = tail[index_tail].getColor();
-                            col_s.a = (j - pos_tail_y) * 256 / 25;
-                            tail[index_tail].setColor(col_s);
 
-                        }
                         else
                         {
                             Color col_s = tail[index_tail].getColor();
@@ -931,7 +1044,14 @@ int main(void)
                             tail[index_tail].setColor(col_s);
 
                         }
-                        if (j > 220)
+                        if (j - pos_tail_y < 25)
+                        {
+                            tail[index_tail].setScale(tail[index_tail].getScale().x * sqrt(25 * 25 - (25 - j + pos_tail_y) * (25 - j + pos_tail_y)) / 25 , 1);
+                            Color col_s = tail[index_tail].getColor();
+                            col_s.a = (j - pos_tail_y) * col_s.a / 25;
+                            tail[index_tail].setColor(col_s);
+
+                        }
                         window.draw(tail[index_tail]);
                     }
                 }
@@ -954,11 +1074,15 @@ int main(void)
             }
 
         }
+
+
+
+
         for (int i = 0; i < 5; i++)
             if (fire[i] != 0)
             {
                 if (fire_time[i] == 0)
-                    fire_time[i] = clock_start.getElapsedTime().asMicroseconds();
+                    fire_time[i] = clock_start.getElapsedTime().asMicroseconds() + pauseTime;
                 fireSprite.setTextureRect(IntRect((fire[i] - 1) % 5 * 960 / 5, (fire[i] - 1) / 5 * 768 / 4, 960 / 5, 768 / 4));
                 fireSprite.setScale(0.8, 0.8);
                 fireSprite.setPosition(100 * i + 410, 517);
@@ -967,14 +1091,307 @@ int main(void)
                 fireSprite.setColor(col_s);
 
 
-                if (clock_start.getElapsedTime().asMicroseconds() - fire_time[i] > 15000.0 * fire[i])
+                if (clock_start.getElapsedTime().asMicroseconds() + pauseTime - fire_time[i] > 15000.0 * fire[i])
                     fire[i]++;
                 window.draw(fireSprite);
                 if (fire[i] > 20)
                     fire[i] = 0;
             }
+        for(int i = 0; i < 5; i++)
+        {
+            if (tail_is_pressed[i])
+            {
+                fire1_count[i]++;
+                if (fire1_count[i] > 11)
+                    fire1_count[i] = 6;
+                fireSprite.setScale(0.8, 0.5);
+                fireSprite.setTextureRect(IntRect((fire1_count[i] - 1) % 5 * 960 / 5, (fire1_count[i] - 1) / 5 * 768 / 4, 960 / 5, 768 / 4));
+                fireSprite.setPosition(100 * i + 410, 517 + 40);
+
+                window.draw(fireSprite);
+            }
+        }
+        sprintf(strtmp, "%i:%i\n%i", int(music0.getDuration().asSeconds() - music0.getPlayingOffset().asSeconds()) / 60, int(music0.getDuration().asSeconds() - music0.getPlayingOffset().asSeconds()) % 60, player->get_score(song_id));
+        max_score.setString(strtmp);
+        window.draw(max_score);
+        window.display();
+        if (Keyboard::isKeyPressed(Keyboard::Escape))
+        {
+            pauseTime += clock_start.getElapsedTime().asMicroseconds() - 2006000;
+            music0.pause();
+            switch(pause(keys, window, font))
+            {
+            case 0:
+                while (list.count() != 0)
+                    list.del(0);
+                return -1;
+                break;
+            case 1:
+                while (list.count() != 0)
+                    list.del(0);
+                return 0;
+                break;
+            default:
+                break;
+            }
+
+            int i = 0;
+            //Time time = Time();
+            music0.setPlayingOffset(music0.getPlayingOffset() - microseconds(2000000));
+            while (list.get(i)->pos.y > 200)
+            {
+                key_data * tmpdata = list.get(i);
+                tmpdata->pos = Vector2f(620 + tmpdata->index * 32   , pos_y + 200);
+                tmpdata->pos_tail = Vector2f(620 + tmpdata->index * 32   , pos_y + 200);
+                i++;
+            }
+            music0_flag = true;
+
+            clock_start.restart();
+        }
+        if (music0.getStatus() == Music::Stopped)
+        {
+            if (max_notes == 0)
+                max_notes = note_strick;
+            player->update((int)round(score), song_id);
+            //results(window, score, isCareer, float(count - good_notes) / float(count), max_notes, player, font);
+            return results(window, score, isCareer, float(count - good_notes) / float(count), max_notes, player, font, conc);
+        }
+    }
+    while (list.count() != 0)
+        list.del(0);
+    return int(round(score));
+}
+
+int pause(Keyboard::Key * keys, RenderWindow &window, Font font)
+{
+
+    Texture new_back_texture;
+    new_back_texture.setSmooth(true);
+    new_back_texture.loadFromImage(window.capture());
+    Sprite new_back;
+    new_back.setTexture(new_back_texture);
+    new_back.setColor(Color(new_back.getColor().r * 0.6, new_back.getColor().g * 0.6, new_back.getColor().b * 0.6));
+    Image b_image;
+    b_image.create(1, 1, Color(254, 254, 204));
+    Texture b_texture;
+    b_texture.loadFromImage(b_image);
+    Sprite button_background;
+    button_background.setTexture(b_texture);
+    Text button[4];
+    int selected_button = -1;
+    std::string str[4] = {"Restart", "New song", "Settings", "Back"};
+    Color selected_button_color = Color(123, 4 ,2);
+    Color unselected_button_color = Color(198, 138, 72);
+    for (int i = 0; i < 4; i++)
+    {
+        button[i].setColor(unselected_button_color);
+        button[i].setString(str[i]);
+        button[i].setPosition(150 - str[i].length() * 10, 202 + i * 50);
+        button[i].setCharacterSize(30);
+        button[i].setFont(font);
+    }
+    Vector2i mouse_pos;
+    while (window.isOpen())
+    {
+
+        Event event;
+        mouse_pos = Mouse::getPosition();
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed)
+                window.close();
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                if (button[selected_button].getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+                {
+                    switch (selected_button) {
+                    case 0:
+                        return 0;
+                        break;
+                    case 1:
+                        return 1;
+                        break;
+                    case 2:
+                        settings(keys, window, new_back, button_background, font);
+                        break;
+                    case 3:
+                        return 2;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    selected_button = -1;
+
+                }
+
+            }
+        }
+        window.clear();
+        window.draw(new_back);
+       // window.draw(fret);
+        mouse_pos = Mouse::getPosition(window);
+        for (int i = 0; i < 4; i++)
+        {
+            if (button[i].getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+            {
+                selected_button = i;
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == selected_button)
+            {
+                button[i].setColor(selected_button_color);
+                button_background.setScale(button[i].getGlobalBounds().width + 10, button[i].getGlobalBounds().height + 10);
+                button_background.setPosition(button[i].getGlobalBounds().left - 5, button[i].getGlobalBounds().top - 5);
+                window.draw(button_background);
+            }
+            else
+            {
+                button[i].setColor(unselected_button_color);
+            }
+
+            window.draw(button[i]);
+        }
+
         window.display();
     }
+    return 2;
+}
 
+int results(RenderWindow &window, int score, bool isCareer, float good_notes, int max_notes, Player * player, Font font, int conc)
+{
+    int cost[5] = {0, 200, 1000, 5000, 100000};
+    int earned_money = int((cost[conc] + 50) * (good_notes * 2 - 1));
+    if (!isCareer)
+        earned_money = 0;
+    player->earn_money(earned_money);
+    player->update(0, 0);
+    Image image;
+    image.loadFromFile("magazine.png");
+    Texture magazine_texture;
+    magazine_texture.loadFromImage(image);
+    Sprite magazine;
+    magazine.setTexture(magazine_texture);
+    magazine.setScale(768.0 / magazine_texture.getSize().y, 768.0 / magazine_texture.getSize().y);
+    magazine.setPosition(0, 0);
+    image.loadFromFile("paper.png");
+    Texture paper_texture;
+    paper_texture.loadFromImage(image);
+    Sprite paper;
+    paper.setTexture(paper_texture);
+    paper.setScale(768.0 / paper_texture.getSize().y, 768.0 / paper_texture.getSize().y);
+    paper.setPosition(magazine.getGlobalBounds().width, 0);
+    Text button[2];
+    int selected_button = -1;
+    std::string str[2] = {"New song", "Replay"};
+    Color selected_button_color = Color(123, 4 ,2);
+    Color unselected_button_color = Color(20, 30, 20);
+    Color info_color =  Color(20, 30, 20);
+    for (int i = 0; i < 2; i++)
+    {
+        button[i].setColor(unselected_button_color);
+        button[i].setString(str[i]);
+        button[i].setPosition(1200 - str[i].length() * 10, 102 + i * 50);
+        button[i].setCharacterSize(30);
+        button[i].setFont(font);
+    }
+    Text score_text, good_notes_text, max_notes_text, money;
+    char buff[30];
+    sprintf(buff, "Your score: %i", score);
+    score_text.setString(buff);
+    sprintf(buff, "%.1f%%", good_notes * 100);
+    good_notes_text.setString(buff);
+    sprintf(buff, "Note streak: %i", max_notes);
+    max_notes_text.setString(buff);
+    sprintf(buff, "Eaned money: %i$", earned_money);
+    money.setString(buff);
+    money.setFont(font);
+    money.setCharacterSize(30);
+    money.setPosition(730, 252);
+    money.setColor(info_color);
+    score_text.setFont(font);
+    score_text.setCharacterSize(30);
+    score_text.setPosition(730, 102);
+    score_text.setColor(info_color);
+    good_notes_text.setFont(font);
+    good_notes_text.setCharacterSize(30);
+    good_notes_text.setPosition(730, 152);
+    good_notes_text.setColor(info_color);
+    max_notes_text.setFont(font);
+    max_notes_text.setCharacterSize(30);
+    max_notes_text.setPosition(730, 202);
+    max_notes_text.setColor(info_color);
+    Vector2i mouse_pos;
+    Event event;
+    while (window.isOpen())
+    {
+        while(window.pollEvent(event))
+        {
+            if(event.type == Event::Closed)
+            {
+                window.close();
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                if (button[selected_button].getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+                {
+                    switch (selected_button) {
+                    case 0:
+                        return 0;
+                        break;
+                    case 1:
+                        return -1;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    selected_button = -1;
+                }
+            }
+        }
+        window.clear();
+        //window.draw(background);
+        window.draw(magazine);
+        window.draw(paper);
+        mouse_pos = Mouse::getPosition(window);
+        for (int i = 0; i < 2; i++)
+        {
+            if (button[i].getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+            {
+                selected_button = i;
+            }
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            if (i == selected_button)
+            {
+                button[i].setColor(selected_button_color);
+            }
+            else
+            {
+                button[i].setColor(unselected_button_color);
+            }
+
+            window.draw(button[i]);
+        }
+        window.draw(score_text);
+        window.draw(good_notes_text);
+        window.draw(max_notes_text);
+        window.draw(money);
+        window.display();
+
+
+
+    }
     return 0;
 }
+

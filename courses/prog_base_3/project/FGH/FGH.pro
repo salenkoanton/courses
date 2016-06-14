@@ -7,4 +7,13 @@ INCLUDEPATH += C:/SFML/include
 DEPENDPATH += C:/SFML/include
 
 SOURCES += \
-    first.cpp
+    first.cpp \
+    menu.cpp \
+    career.cpp \
+    song_list.cpp
+
+HEADERS += \
+    game.h \
+    menu.h \
+    career.h \
+    song_list.h
