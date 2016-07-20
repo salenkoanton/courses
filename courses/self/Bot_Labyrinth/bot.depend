@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1468576514 source:c:\study\bot\main.cpp
+	"main.h"
+	"list.h"
+	<stdlib.h>
+	"list.h"
+
+1468578866 c:\study\bot\main.h
+	<windows.h>
+	"enums.h"
+	"list.h"
+
+1468500169 c:\study\bot\enums.h
+
+1468576301 c:\study\bot\list.h
+	"enums.h"
+

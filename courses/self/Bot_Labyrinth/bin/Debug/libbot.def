@@ -1,0 +1,10 @@
+EXPORTS
+    DllMain@12 @1
+    bot @2
+    list_add @3
+    list_change @4
+    list_del @5
+    list_free @6
+    list_get @7
+    list_new @8
+    list_size @9
